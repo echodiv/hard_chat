@@ -1,0 +1,4 @@
+HADR CHAT version 0.0.1
+    1. add flask-sqlalchemy
+    2. add flask-migrate
+    3. add autogenerate of database schema
