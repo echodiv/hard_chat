@@ -1,5 +1,5 @@
 .venv
 .idea
-hard_chat_db
+*.db
 __pycache__
 *~
