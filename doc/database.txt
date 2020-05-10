@@ -1,0 +1,27 @@
++==================+
+| Main database schema: |
++==================+
+Users (as U)
+- user_id (primary)
+- Email
+- Password
+- Salt
+- Phone (primary ?)
+- Status
+Messages (as M):
+- message_id (primary)
+- chat_id (foreign <- C)
+- user_id (foreign <- U)
+- message
+- type (post, message, etc.)
+- status
+Talkers (as T):
+- chat_id (foreign <- C)
+- user_id (foreign <- U)
+- user_role (creator, moderator, author)
+- status (invited by, ...)
+Chats (as C):
+- chat_id (primary)
+- name
+- status (deleted, active, blocked, etc.)
+- description (edited) 

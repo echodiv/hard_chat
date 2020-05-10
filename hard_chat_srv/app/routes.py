@@ -1,12 +1,14 @@
-from flask import Flask, request
-import logging
-import time
-import json
+from flask import render_template
+from app import app
 
-app = Flask(__name__)
-MESSAGES = [
-    {"username": "John", "time": time.time(), "text": "Hello!"}
-]
+
+@app.route("/")
+@app.route("/index")
+def index():
+    user = {'username': 'Miguel'}
+    posts = [{'author': {'username': 'John'},'body': 'Beautiful day in Portland!'},{'author': {'username': 'Susan'},'body': 'The Avengers movie was so cool!'}] 
+    return render_template('index.html', title='Home', user=user, posts=posts)
+
 
 @app.route("/send")
 def send_mesage():
@@ -37,5 +39,3 @@ def get_messages():
     """
     return {"messages": MESSAGES}
 
-
-app.run(debug=True)
