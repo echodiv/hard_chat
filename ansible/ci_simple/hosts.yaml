@@ -1,0 +1,17 @@
+- hosts: flask
+      tasks:
+      - name: install pip packeges
+        pip:
+
+- hosts: database
+     remote_user: root
+
+     tasks:
+     - name: ensure postgresql is the latest version
+       apt:
+         name: postgresql
+         state: latest
+     - name: ansure that postgresql is started
+       service: 
+         name: postgresql
+         state: started
