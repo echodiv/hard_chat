@@ -1,9 +1,18 @@
 from app import db
+from app import login
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
 
-class Users(db.Model):
+class Users(UserMixin, db.Model):
     __tablename__ = 'users'
+
+    def set_password(self, row_pwd):
+        self.password = generate_password_hash(row_pwd)
+
+    def check_password(self, row_pwd):
+        return check_password_hash(self.password, row_pwd)
 
     id = db.Column(db.Integer, 
             primary_key=True)
@@ -79,3 +88,7 @@ class Talkers(db.Model):
     def __repr__(self):
         return f'{self.uid} talk in chat {self.chat_id}'
 
+
+@login.user_loader
+def load_user(id):
+    return Users.query.get(int(id))
