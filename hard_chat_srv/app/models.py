@@ -30,7 +30,7 @@ class Users(UserMixin, db.Model):
     password = db.Column(db.String(128))
     phone = db.Column(db.String(12))
     status = db.Column(db.Integer)
-
+    text_status = db.Column(db.String(256))
     def __repr__(self):
         return f'<User {self.name} with id {self.id} and email {self.email}>\n'
 

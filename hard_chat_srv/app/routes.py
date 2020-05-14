@@ -1,10 +1,16 @@
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, EditProfile
 from app.models import Users
+from datetime import datetime
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 
+@app.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.last_visit_time = datetime.utcnow()
+        db.session.commit()
 
 @app.route("/")
 @app.route("/index")
@@ -13,7 +19,6 @@ def index():
     user = {'username': 'Miguel'}
     posts = [{'author': {'username': 'John'},'body': 'Beautiful day in Portland!'},{'author': {'username': 'Susan'},'body': 'The Avengers movie was so cool!'}] 
     return render_template('index.html', title='Home', user=user, posts=posts)
-
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -56,6 +61,33 @@ def register():
         flash(f'Congratulation! Youre register with email {form.email.data}')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
+
+@app.route('/edit_profile', methods=['POST', 'GET'])
+def edit_profile():
+    form = EditProfile()
+    if form.validate_on_submit():
+        current_user.name = form.name.data
+        current_user.sename = form.sename.data
+        current_user.phone = form.phone.data
+        db.session.commit()
+        flash('Change have been saved')
+        return redirect(url_for('edit_profile'))
+    elif request.method == 'GET':
+        form.name.data = current_user.name
+        form.sename.data = current_user.sename
+        form.phone.data = current_user.phone
+    return render_template('edit_profile.html', title='Edit profile', form=form)
+
+@app.route('/user/<id>')
+@login_required
+def user(id):
+    user = Users.query.filter_by(id=id).first_or_404()
+    posts = [
+            {'author': user, 'body': 'test'},
+            {'author': user, 'body': 'test 2' }
+            ]
+    return render_template('user.html', user=user, posts=posts)
+
 
 @app.route("/send")
 def send_mesage():
