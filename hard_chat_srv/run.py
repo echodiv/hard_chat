@@ -9,3 +9,5 @@ def make_shell_context():
             'Chats': Chats,
             'Messages': Messages,
             'Talkers': Talkers}
+
+app.run(debug=True)

@@ -30,8 +30,8 @@ class EditProfile(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(min=1, max=128)])
     sename = StringField('Sename', validators=[DataRequired(), Length(min=1, max=128)])
     phone = StringField('Phone number', validators=[Length(min=10, max=12)])
+    url = StringField('Url', validators=[Length(min=0, max=16)])
     submit = SubmitField('Edit Profile')
-
 
 class SetStatus(FlaskForm):
     status = StringField('Status', validators=[Length(min=0, max=256)])

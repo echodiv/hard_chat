@@ -69,6 +69,7 @@ def edit_profile():
         current_user.name = form.name.data
         current_user.sename = form.sename.data
         current_user.phone = form.phone.data
+        current_user.url = form.url.data
         db.session.commit()
         flash('Change have been saved')
         return redirect(url_for('edit_profile'))
@@ -76,6 +77,7 @@ def edit_profile():
         form.name.data = current_user.name
         form.sename.data = current_user.sename
         form.phone.data = current_user.phone
+        form.url.data = current_user.url
     return render_template('edit_profile.html', title='Edit profile', form=form)
 
 @app.route('/user/<id>')

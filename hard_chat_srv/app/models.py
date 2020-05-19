@@ -16,6 +16,7 @@ class Users(UserMixin, db.Model):
 
     id = db.Column(db.Integer, 
             primary_key=True)
+    url = db.Column(db.String(64), index=True, unique=True)
     reg_time = db.Column(db.DateTime, 
             index=True, 
             default=datetime.utcnow)
