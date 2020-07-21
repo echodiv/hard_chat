@@ -1,0 +1,52 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the develop branch
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    - name: Checkout Code
+      uses: actions/checkout@v2
+      # Here I use the system Python, which is 3.6.
+      # You may install another Python version with the proper action
+    - name: Install missing python packages
+      run: sudo apt-get install -y --no-install-recommends python3-venv python3-setuptools
+      # USE ONLY ONE THE 2 STEPS BELOW
+      ## Dependencies with pip + requirements.txt
+    - name: Install dependencies with pip + requirements.txt
+      run: |
+        python3 -m venv .venv
+        .venv/bin/pip install -r requirements.txt
+      ## Dependencies with pipenv
+    - name: Install dependencies with pipenv
+      run: |
+        python3 -m pip install pipenv
+        python3 -m pipenv sync --python 3.6
+      env:
+        PIPENV_VENV_IN_PROJECT: 1
+      # Now we move the dependencies where super-linter can see them
+    - name: Move the dependencies
+      run: mv .venv /home/runner/work/_temp/_github_workflow
+      # Now we set the PYTHONPATH to the path of the dependencies *inside* the container
+    - name: Lint Code Base
+      uses: docker://github/super-linter:v2.2.0
+      env:
+        VALIDATE_ALL_CODEBASE: true
+        PYTHONPATH: "/github/workspace/:\
+            /github/workflow/.venv/lib/python3.6/site-packages"
