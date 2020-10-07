@@ -90,5 +90,5 @@ class Talkers(db.Model):
 
 
 @login.user_loader
-def load_user(id):
+def load_user(id: int) -> Users:
     return Users.query.get(int(id))

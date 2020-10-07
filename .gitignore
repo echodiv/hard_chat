@@ -1,6 +1,15 @@
+# virtual env
 .venv
+.env
+
+# idea
 .idea
+
+# temp
 *.db
-__pycache__
 *~
 *.swp
+
+# python
+*.pyc
+__pycache__
