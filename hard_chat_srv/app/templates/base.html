@@ -1,24 +1,18 @@
 <html>
     <head>
-	    <title>
-		    {% if title %}
-		    {{ title }}
-	            {% else %}
-                    Welcome to Hard Chat!
-		    {% endif %}
-	    </title>
+	    <title>{% if title %}{{ title }}{% else %}Welcome to Hard Chat!{% endif %}</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
     </head>
     <body>
-        <div>HARD Chat: 
-		<a href="{{ url_for('index') }}">Home</a>
-		{% if current_user.is_anonymous %}
-		<a href="{{ url_for('login') }}">Login</a>
-		{% else %}
-		<a href="{{ url_for('user', id=current_user.id) }}">Prifile</a>
-		<a href="{{ url_for('logout') }}">Logout</a>
-		{% endif %}
-	</div>
-	<hr>
+        <nav>HARD Chat: 
+            <a href="{{ url_for('index') }}">Home</a>
+	    {% if current_user.is_anonymous %}
+	    <a href="{{ url_for('login') }}">Login</a>
+	    {% else %}
+	    <a href="{{ url_for('user', id=current_user.id) }}">Prifile</a>
+	    <a href="{{ url_for('logout') }}">Logout</a>
+	    {% endif %}
+	</nav>
 	{% with messages = get_flashed_messages() %}
 	{% if messages %}
 	    <ul>
@@ -30,6 +24,5 @@
 	{% endwith %}
 	{% block content %}
 	{% endblock %}
-
     </body>
 </html>

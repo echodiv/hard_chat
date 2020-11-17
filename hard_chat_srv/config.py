@@ -6,7 +6,7 @@ class BaseConfig:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'A SECRET KEY'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    ##### настройка Flask-Mail #####
+    ##### Flask-Mail #####
     MAIL_SERVER = 'smtp.googlemail.com'
     MAIL_PORT = 587
     MAIL_USE_TLS = True

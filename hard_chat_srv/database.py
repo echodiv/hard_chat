@@ -3,7 +3,7 @@ import time
 import json
 import sqlite3
 
-
+# dep
 class Database():
     def __init__(self):
         ''' Class for working with database '''

@@ -4,6 +4,7 @@ Create using Flask
 - Settings
 1. Environment variables 
 ``` [export | set ] FLASK_APP=run.py ```
+2. flask run --host 0.0.0.0
 
 - Database migration:
 1. Create Migration State
