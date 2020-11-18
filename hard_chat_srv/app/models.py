@@ -5,6 +5,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
 
+followers = db.Table('followers',
+        db.Column('follower_id', db.Integer, db.ForeignKey('users.id')),
+        db.Column('followed_id', db.Integer, db.ForeignKey('users.id')))
+
+
 class Users(UserMixin, db.Model):
     __tablename__ = 'users'
 
@@ -31,9 +36,41 @@ class Users(UserMixin, db.Model):
     phone = db.Column(db.String(12))
     status = db.Column(db.Integer)
     text_status = db.Column(db.String(256))
+    followed = db.relationship('Users', secondary=followers,
+            primaryjoin=(followers.c.follower_id == id),
+            secondaryjoin=(followers.c.followed_id == id),
+            backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+    posts = db.relationship('Posts', backref='author', lazy='dynamic')
+
+    def follow(self, user):
+        if not self.is_following(user):
+            self.followed.append(user)
+
+    def unfollow(self, user):
+        if self.is_following(user):
+            self.followed.remove(user)
+
+    def is_following(self, user):
+        return self.followed.filter(followers.c.followed_id == user.id).count() > 0
+
+    def followed_posts(self):
+        followed = Posts.query.join(
+            followers, (followers.c.followed_id == Posts.user_id)).filter(
+                followers.c.follower_id == self.id)
+        own = Posts.query.filter_by(user_id=self.id)
+        return followed.union(own).order_by(Posts.timestamp.desc())
+
     def __repr__(self):
         return f'<User {self.name} with id {self.id} and email {self.email}>\n'
 
+class Posts(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.String(140))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    def __repr__(self):
+        return '<Post {}>'.format(self.body)
 
 class Chats(db.Model):
     __tablename__ = 'chats'
@@ -87,7 +124,6 @@ class Talkers(db.Model):
 
     def __repr__(self):
         return f'{self.uid} talk in chat {self.chat_id}'
-
 
 @login.user_loader
 def load_user(id: int) -> Users:

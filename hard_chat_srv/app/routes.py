@@ -118,3 +118,34 @@ def get_messages():
     """
     return str('{"messages": MESSAGES}')
 
+@app.route("/follow/<user_id>")
+@login_required
+def follow(user_id):
+    user = Users.query.filter_by(id=user_id).first()
+    if user is None:
+        flash("User with id {} not found".format(user_id))
+        return redirect(url_for('index'))
+    if user == current_user:
+        flash("You can not follow yourself")
+        return redirect(url_for('index'))
+    current_user.follow(user)
+    db.session.commit()
+    flash("now youre following {}!".format(user.name))
+    return redirect(url_for('user', id=user_id))
+
+@app.route('/unfollow/<user_id>')
+@login_required
+def unfollow(user_id):
+    user = Users.query.filter_by(id=user_id).first()
+    if user is None:
+        flash('User {} not found.'.format(user_id))
+        return redirect(url_for('index'))
+    if user == current_user:
+        flash('You cannot unfollow yourself!')
+        return redirect(url_for('user', id=user_id))
+    current_user.unfollow(user)
+    db.session.commit()
+    flash('You are not following {}.'.format(user.name))
+    return redirect(url_for('user', id=user_id))
+
+
