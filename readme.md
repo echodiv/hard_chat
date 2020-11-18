@@ -13,4 +13,8 @@ Create using Flask
 ``` flask db [ upgrade | downgrade ] ```
 
 - For Test:
+1. shell with flask
 ``` flask shell ```
+
+2. Test mail server
+``` python -m smtpd -n -c DebuggingServer localhost:8025 ```
