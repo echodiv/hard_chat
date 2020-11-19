@@ -1,6 +1,6 @@
 from app.models import Users
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length
 
 
@@ -36,3 +36,7 @@ class EditProfile(FlaskForm):
 class SetStatus(FlaskForm):
     status = StringField('Status', validators=[Length(min=0, max=256)])
     submit = SubmitField('Ok')
+
+class PostForm(FlaskForm):
+    post = TextAreaField('What\'s new?', validators=[DataRequired(), Length(min=1, max=140)])
+    submit = SubmitField('Publush')

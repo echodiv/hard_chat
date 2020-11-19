@@ -5,6 +5,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class BaseConfig:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'A SECRET KEY'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    ##### HardChat #####
+    POST_PER_PAGE = 3
 
     ##### Flask-Mail #####
     MAIL_SERVER = os.environ.get('MAIL_SERVER')
