@@ -1,9 +1,10 @@
 body{
     background-color: #edece8;
 }
-nav{
-    background-color: #8ac5c3;
-}
+#nav{
+#    background-color: #8ac5c3;
+#}
+
 .etc {
     background-color: #ffffff;
 }

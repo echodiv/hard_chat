@@ -1,29 +1,65 @@
-<html>
-    <head>
-	    <title>{% if title %}{{ title }}{% else %}Welcome to Hard Chat!{% endif %}</title>
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
-    </head>
-    <body>
-        <nav>HARD Chat: 
-            <a href="{{ url_for('index') }}">Home</a>
-	    {% if current_user.is_anonymous %}
-	    <a href="{{ url_for('login') }}">Login</a>
-	    {% else %}
-	    <a href="{{ url_for('user', id=current_user.id) }}">Profile</a>
-	    <a href="{{ url_for('logout') }}">Logout</a>
-	    {% endif %}
-	    <a href="{{ url_for('explore') }}">Explore</a>
-	</nav>
-	{% with messages = get_flashed_messages() %}
-	{% if messages %}
-	    <ul>
-		    {% for message in messages %}
-		    <li>{{ message }}</li>
-		    {% endfor %}
-            </ul>
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+    {% if title %}{{ title }}{% else %}Welcome to Hard Chat!{% endif %}
+{% endblock %}
+
+{% block styles %}
+    {{super()}}
+        <link rel="stylesheet"
+         href="{{url_for('.static', filename='css/style.css')}}">
+{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <ul class="navbar-nav mr-auto">
+	<li class="navbar-item">
+		<a class="navbar-brand" href="{{ url_for('index') }}">HardChat</a>
+	</li>
+        {% if current_user.is_anonymous %}
+        <li calss="navbar-item">
+	    <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+	</li>
+	{% else %}
+	<li calss="navbar-item">
+	    <a class="nav-link" href="{{ url_for('user', id=current_user.id) }}">Profile</a>
+	</li>
+	<li calss="navbar-item">
+	    <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+        </li> 
+	{% endif %}
+        <li calss="navbar-item">
+       	    <a class="nav-link" href="{{ url_for('explore') }}">Explore</a>
+	</li>
+    </ul>
+    <form class="form-inline" action="#">
+        <input class="form-control mr-sm-2" type="text" placeholder="Search">
+        <button class="btn btn-success" type="submit">Search</button>
+    </form>
+    </nav>
+{% endblock %}
+{% block content %}
+    <div class="container">
+	<div class="row">
+            <div class="col-3">
+		    <nav id="sidebap" class="sidebar-wrapper">
+			    <ul>
+				    <li><a>Friend 1</a></li>
+				    <li><a>Friend 2</a></li>
+			    </ul>
+		    </nav>
+	    </div>
+            <div class="col-9">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+	    <div class="alert alert-info" role="alert">{{ message }}</div>
+        {% endfor %}
 	{% endif %}
 	{% endwith %}
-	{% block content %}
+	{% block app_content %}
 	{% endblock %}
-    </body>
-</html>
+	    </div>
+	</div>
+    </div>>
+{% endblock %}
