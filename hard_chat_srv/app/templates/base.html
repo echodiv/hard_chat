@@ -10,6 +10,12 @@
          href="{{url_for('.static', filename='css/style.css')}}">
 {% endblock %}
 
+{% block scripts %}
+    {{ super() }}
+    {{ moment.include_moment() }}
+    {{ moment.lang('en') }}
+{% endblock %}
+
 {% block navbar %}
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
     <ul class="navbar-nav mr-auto">
