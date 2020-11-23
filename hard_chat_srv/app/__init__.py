@@ -1,5 +1,6 @@
-from flask import Flask
+from flask import Flask, request
 from config import BaseConfig
+from flask_babel import Babel
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -13,6 +14,7 @@ import os
 
 app = Flask(__name__)
 app.config.from_object(BaseConfig)
+babel = Babel(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 mail = Mail(app)
@@ -55,6 +57,9 @@ if not app.debug:
     app.logger.setLevel(logging.INFO)
     app.logger.info('HardChat startup')
 
+@babel.localeselector
+def get_locale():
+    return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 from app import routes, models, errors
 

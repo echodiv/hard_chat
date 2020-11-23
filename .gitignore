@@ -13,3 +13,6 @@
 # python
 *.pyc
 __pycache__
+
+# babel
+*.pot
