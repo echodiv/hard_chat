@@ -4,7 +4,8 @@
             <a href="{{ url_for('user', id=post.author.id) }}">
                 {{ post.author.name }}
             </a>
-            says:<br>{{ post.body }}
+		says {{ moment(post.timestamp).fromNow() }}:
+	    <br>{{ post.body }}
         </td>
     </tr>
 </table>
