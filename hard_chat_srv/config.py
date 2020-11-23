@@ -4,10 +4,10 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class BaseConfig:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'A SECRET KEY'
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    
+
     ##### HardChat #####
     POST_PER_PAGE = 3
+    LANGUAGES = ['en', 'ru']
 
     ##### Flask-Mail #####
     MAIL_SERVER = os.environ.get('MAIL_SERVER')
@@ -18,5 +18,7 @@ class BaseConfig:
     MAIL_DEFAULT_SENDER = MAIL_USERNAME
     ADMINS=['exzmple@mail.com']
 
+    ##### SQLAlchemy #####
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'app.db')

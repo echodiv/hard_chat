@@ -1,4 +1,5 @@
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, g
+from flask_babel import _, get_locale
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfile, PostForm, ResetPasswordRequestForm, ResetPasswordForm
 from app.models import Users, Posts
@@ -12,19 +13,21 @@ def before_request():
     if current_user.is_authenticated:
         current_user.last_visit_time = datetime.utcnow()
         db.session.commit()
+    g.locale = str(get_locale())
 
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/index", methods=['GET', 'POST'])
 @login_required
 def index():
+    # todo: move to a separate function
     form = PostForm()
     if form.validate_on_submit():
         post = Posts(body=form.post.data, author=current_user)
         db.session.add(post)
         db.session.commit()
-        flash('Post published')
+        flash(_('Post published'))
         return redirect(url_for('index'))
-    
+    # todo: move to separate function
     page = request.args.get('page', 1, type=int)
     posts = current_user.followed_posts().paginate(page,
             app.config['POST_PER_PAGE'], False)
@@ -126,9 +129,8 @@ def send_mesage():
     app.logger.info(text)
 
     # TODO ave message
-    MESSAGES.append({"username": username, "time": time.time(), "text": text})
 
-    return {"ok": True}
+    return {"ok": True} # hahaha =)
 
 @app.route("/get_messages")
 @login_required

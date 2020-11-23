@@ -1,0 +1,63 @@
+# Russian translations for PROJECT.
+# Copyright (C) 2020 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2020-11-23 21:44+0000\n"
+"PO-Revision-Date: 2020-11-23 21:46+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ru\n"
+"Language-Team: ru <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.0\n"
+
+#: app/forms.py:10
+msgid "Password"
+msgstr "Пароль"
+
+#: app/forms.py:11
+msgid "Remember Me"
+msgstr "Запомнить меня"
+
+#: app/forms.py:12
+msgid "Sign In"
+msgstr "Вход"
+
+#: app/routes.py:27
+msgid "Post published"
+msgstr "Пост опубликован"
+
+#: app/templates/404.html:4
+msgid "File not found"
+msgstr "Файл не найден"
+
+#: app/templates/404.html:5 app/templates/500.html:6
+msgid "home"
+msgstr "домой"
+
+#: app/templates/500.html:4
+msgid "An unexpected error has accurred"
+msgstr "Произошла неожиданная ошибка"
+
+#: app/templates/500.html:5
+msgid "The administrator has been notified. Sorry for the inconvenience!"
+msgstr "Администратор уведомлён. Извините за неудобства!"
+
+#: app/templates/_post.html:9
+#, python-format
+msgid "%(username)s said %(when)s"
+msgstr "%(username)s опубликовал %(when)s"
+
+#: app/templates/index.html:5
+#, python-format
+msgid "Hi, %(username)s!"
+msgstr "Привет, %(username)s!"
+
