@@ -7,7 +7,7 @@
 {% block styles %}
     {{super()}}
         <link rel="stylesheet"
-         href="{{url_for('.static', filename='css/style.css')}}">
+         href="{{url_for('static', filename='css/style.css')}}">
 {% endblock %}
 
 {% block scripts %}
@@ -20,22 +20,22 @@
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
     <ul class="navbar-nav mr-auto">
 	<li class="navbar-item">
-		<a class="navbar-brand" href="{{ url_for('index') }}">HardChat</a>
+		<a class="navbar-brand" href="{{ url_for('main.index') }}">HardChat</a>
 	</li>
         {% if current_user.is_anonymous %}
         <li calss="navbar-item">
-	    <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+	    <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
 	</li>
 	{% else %}
 	<li calss="navbar-item">
-	    <a class="nav-link" href="{{ url_for('user', id=current_user.id) }}">Profile</a>
+	    <a class="nav-link" href="{{ url_for('main.user', id=current_user.id) }}">Profile</a>
 	</li>
 	<li calss="navbar-item">
-	    <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+	    <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
         </li> 
 	{% endif %}
         <li calss="navbar-item">
-       	    <a class="nav-link" href="{{ url_for('explore') }}">Explore</a>
+       	    <a class="nav-link" href="{{ url_for('main.explore') }}">Explore</a>
 	</li>
     </ul>
     <form class="form-inline" action="#">
