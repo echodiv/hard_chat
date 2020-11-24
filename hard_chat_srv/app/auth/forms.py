@@ -35,18 +35,3 @@ class RegistrationForm(FlaskForm):
         if user is not None:
             raise ValidationError('Please use a different email address')
 
-
-class EditProfile(FlaskForm):
-    name = StringField('Name', validators=[DataRequired(), Length(min=1, max=128)])
-    sename = StringField('Sename', validators=[DataRequired(), Length(min=1, max=128)])
-    phone = StringField('Phone number', validators=[Length(min=10, max=12)])
-    submit = SubmitField('Edit Profile')
-
-
-class SetStatus(FlaskForm):
-    status = StringField('Status', validators=[Length(min=0, max=256)])
-    submit = SubmitField('Ok')
-
-class PostForm(FlaskForm):
-    post = TextAreaField('What\'s new?', validators=[DataRequired(), Length(min=1, max=140)])
-    submit = SubmitField('Publush')
