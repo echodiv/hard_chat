@@ -18,6 +18,9 @@ class BaseConfig:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = MAIL_USERNAME
     ADMINS=['exzmple@mail.com']
+    
+    # Elasticsearch
+    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
 
     ##### SQLAlchemy #####
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -27,6 +30,7 @@ class BaseConfig:
 class TestConfig:
     ''' Test config '''
     TESTING = True
+    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
           'sqlite:///' + os.path.join(basedir, 'app.db')
