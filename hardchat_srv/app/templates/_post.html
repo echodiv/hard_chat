@@ -2,9 +2,11 @@
     <tr>
         <td > 
         {% set user_link %}
-            <a href="{{ url_for('main.user', id=post.author.id) }}">
+	<span class="user_popup" id="{{ post.author.id }}">    
+	    <a href="{{ url_for('main.user', id=post.author.id) }}">
                 {{ post.author.name }}
-            </a>
+	    </a>
+	</span>
         {% endset %}
         {{ _('%(username)s said %(when)s', username=user_link, when=moment(post.timestamp).fromNow()) }} 
 	    <br>{{ post.body }}
