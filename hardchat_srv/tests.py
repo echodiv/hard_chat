@@ -1,8 +1,10 @@
-from datetime import datetime, timedelta
-import unittest
 from app import db, create_app
 from app.models import Users, Posts
 from config import TestConfig
+from datetime import datetime, timedelta
+import unittest
+import random
+import json
 
 
 class UserModelCase(unittest.TestCase):
@@ -26,8 +28,7 @@ class UserModelCase(unittest.TestCase):
     def test_follow(self):
         u1 = Users(name='john', email='john@example.com')
         u2 = Users(name='susan', email='susan@example.com')
-        db.session.add(u1)
-        db.session.add(u2)
+        db.session.add_all([u1, u2])
         db.session.commit()
         self.assertEqual(u1.followed.all(), [])
         self.assertEqual(u1.followers.all(), [])
@@ -83,6 +84,44 @@ class UserModelCase(unittest.TestCase):
         self.assertEqual(f2, [p2, p3])
         self.assertEqual(f3, [p3, p4])
         self.assertEqual(f4, [p4])
+
+    @unittest.skip("function is not supported")
+    def test_user_posts_in_json(self):
+        user = Users(name='Name', email='name@example.com')
+        db.session.add(user)
+
+        # create four posts
+        now = datetime.utcnow()
+        for i in range(10):
+            post = Posts(body="post_{}".format(i), 
+                         author=user,
+                         timestamp=now + timedelta(seconds=i))
+            db.session.add(post)
+    
+    def test_post(self):
+        user = Users(name='david', email='david@example.com')
+        db.session.add(user)
+        now = datetime.utcnow()
+        post = Posts(body="post content", author=user)
+        db.session.add(post)
+        db.session.commit()
+        selected_post = Posts.query.first()
+        all_selected_post = Posts.query.all()
+
+        check_post = {"post_id": 1, 
+                      "post_body": "post content", 
+                      "timestamp": str(selected_post.timestamp), 
+                      "author_id": 1}
+
+        selected_post = json.loads(str(selected_post))
+
+        self.assertEqual(len(all_selected_post), 1)
+        self.assertEqual(selected_post['author_id'], check_post['author_id'])
+        self.assertEqual(selected_post['post_body'], check_post['post_body'])
+        self.assertEqual(selected_post['post_id'], check_post['post_id'])
+        self.assertEqual(len(selected_post.keys()), 4)
+        self.assertEqual(check_post.keys(), selected_post.keys())
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
