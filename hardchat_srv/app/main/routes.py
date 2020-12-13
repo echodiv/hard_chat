@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, request, g, current_app
+from flask import render_template, flash, redirect, url_for, request, g, current_app, jsonify
 from flask_babel import _, get_locale
 from app import db
 from app.main import bp
@@ -20,25 +20,7 @@ def before_request():
 @bp.route("/index", methods=['GET', 'POST'])
 @login_required
 def index():
-    # todo: move to a separate function
-    form = PostForm()
-    if form.validate_on_submit():
-        post = Posts(body=form.post.data, author=current_user)
-        db.session.add(post)
-        db.session.commit()
-        flash(_('Post published'))
-        return redirect(url_for('main.index'))
-    # todo: move to separate function
-    page = request.args.get('page', 1, type=int)
-    posts = current_user.followed_posts().paginate(page,
-            current_app.config['POST_PER_PAGE'], False)
-    next_url = url_for('main.index', page=posts.next_num) \
-        if posts.has_next else None
-    prev_url = url_for('main.index', page=posts.prev_num) \
-        if posts.has_prev else None
-    return render_template('index.html', title='Home',
-            form=form, posts=posts.items,
-            next_url=next_url, prev_url=prev_url)
+    return redirect("/explore", code=302)
 
 @bp.route('/edit_profile', methods=['POST', 'GET'])
 def edit_profile():
@@ -60,16 +42,7 @@ def edit_profile():
 @login_required
 def user(id):
     user = Users.query.filter_by(id=id).first_or_404()
-    page = request.args.get('page', 1, type=int)
-
-    posts = user.posts.order_by(Posts.timestamp.desc()).paginate(
-        page, current_app.config['POST_PER_PAGE'], False)
-    next_url = url_for('main.user', id=user.id, page=posts.next_num) \
-        if posts.has_next else None
-    prev_url = url_for('main.user', id=user.id, page=posts.prev_num) \
-        if posts.has_prev else None
-    return render_template('user.html', user=user, posts=posts.items,
-                           next_url=next_url, prev_url=prev_url)
+    return render_template('user.html', user=user)
 
 @bp.route('/user/<id>/popup')
 @login_required
@@ -120,7 +93,7 @@ def follow(user_id):
     flash("now youre following {}!".format(user.name))
     return redirect(url_for('main.user', id=user_id))
 
-@bp.route('/unfollow/<user_id>')
+@bp.route('/unfollow/<int:user_id>')
 @login_required
 def unfollow(user_id):
     user = Users.query.filter_by(id=user_id).first()
@@ -139,14 +112,15 @@ def unfollow(user_id):
 @login_required
 def explore():
     page = request.args.get('page', 1, type=int)
-    posts = Posts.query.order_by(Posts.timestamp.desc()).paginate(
-        page, current_app.config['POST_PER_PAGE'], False)
-    next_url = url_for('main.explore', page=posts.next_num) \
-        if posts.has_next else None
-    prev_url = url_for('main.explore', page=posts.prev_num) \
-        if posts.has_prev else None
-    return render_template("index.html", title='Explore', posts=posts.items,
-            next_url=next_url, prev_url=prev_url)
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Posts(body=form.post.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash(_('Post published'))
+        return redirect(url_for('main.index'))
+    # todo: move to separate function
+    return render_template('index.html', title='Explore', form=form)
 
 @bp.route('/search')
 @login_required
@@ -162,3 +136,19 @@ def search():
         if page > 1 else None
     return render_template('search.html', title=_('Search'), posts=posts,
                            next_url=next_url, prev_url=prev_url)
+
+@bp.route('/user_posts/<int:id>')
+def user_posts(id):
+    user = Users.query.filter_by(id=id).first_or_404()
+    page = request.args.get('page', 1, type=int)
+
+    return jsonify(Users.to_collection_dict(user.posts, 
+        page, current_app.config['POST_PER_PAGE']))
+
+@bp.route('/followed_posts')
+def followed_posts():
+    page = request.args.get('page', 1, type=int)
+    return jsonify(Users.to_collection_dict(current_user.followed_posts(), 
+        page, current_app.config['POST_PER_PAGE']))
+
+

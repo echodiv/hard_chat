@@ -1,15 +1,10 @@
-<table class="table table-hover">
-    <tr>
-        <td > 
-        {% set user_link %}
-	<span class="user_popup" id="{{ post.author.id }}">    
-	    <a href="{{ url_for('main.user', id=post.author.id) }}">
-                {{ post.author.name }}
-	    </a>
-	</span>
-        {% endset %}
-        {{ _('%(username)s said %(when)s', username=user_link, when=moment(post.timestamp).fromNow()) }} 
-	    <br>{{ post.body }}
-        </td>
-    </tr>
-</table>
+<template id="post_template">
+    <div class="card mb-3 animated fadeIn shadow-sm">
+        <div class="card-body">
+            <div>
+            <span class="text-muted" id="content"></span>
+            </div>
+            <span class="font-weight-light m-0 mt-1" id="post_author"></span>
+        </div>
+    </div>
+</template>

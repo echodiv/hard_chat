@@ -6,13 +6,30 @@ from flask_login import UserMixin
 from app.search import add_to_index, remove_from_index, query_index
 from time import time
 import jwt
+import json
+from sqlalchemy import JSON
+from sqlalchemy import cast
 
 
 followers = db.Table('followers',
         db.Column('follower_id', db.Integer, db.ForeignKey('users.id')),
         db.Column('followed_id', db.Integer, db.ForeignKey('users.id')))
 
-
+class PaginatedAPIMixin(object):
+    @staticmethod
+    def to_collection_dict(query, page, per_page, **kwargs):
+        resources = query.paginate(page, per_page, False)
+        data = {
+            'items': [item.to_dict() for item in resources.items],
+            '_meta': {
+                'page': page,
+                'per_page': per_page,
+                'total_pages': resources.pages,
+                'total_items': resources.total
+            }
+        }
+        return data
+        
 class SearchableMixin(object):
     @classmethod
     def search(cls, expression, page, per_page):
@@ -52,7 +69,11 @@ class SearchableMixin(object):
             add_to_index(cls.__tablename__, obj)
 
 
-class Users(UserMixin, db.Model):
+db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
+db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
+
+
+class Users(UserMixin, PaginatedAPIMixin, db.Model):
     __tablename__ = 'users'
 
     def set_password(self, row_pwd):
@@ -119,15 +140,45 @@ class Users(UserMixin, db.Model):
     def __repr__(self):
         return f'<User {self.name} with id {self.id} and email {self.email}>\n'
 
-class Posts(SearchableMixin, db.Model):
+class Posts(SearchableMixin, PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     __searchable__ = ['body']
 
+    def to_dict(self):
+        ''' Return posts in dict format'''
+        try:
+            user = Users.query.filter_by(id=self.user_id).first()
+        except Exception: 
+        # toDo: read exception ond fix it (unittests)
+            return {'error': '500', 'reason': 'error with key sql_1'}
+
+        data = {
+            'id': self.id,
+            'post_content': self.body,
+            'post_time': self.timestamp.isoformat() + 'Z',
+            'author':{
+                'id': self.user_id,
+                'name': user.name,
+                'sename': user.sename,
+            } 
+        }
+        return data
+
+    def from_dict(self, data):
+        for field in ['id', 'body', 'timestamp', 'user_id']:
+            if field in data:
+                setattr(self, field, data[field])
+
     def __repr__(self):
-        return '<Post {}>'.format(self.body)
+        resp = {'post_id': self.id,
+                'post_body': self.body,
+                'timestamp': str(self.timestamp),
+                'author_id': self.user_id}
+        return str(json.dumps(resp))
+
 
 class Chats(db.Model):
     __tablename__ = 'chats'
@@ -186,6 +237,3 @@ class Talkers(db.Model):
 @login.user_loader
 def load_user(id: int) -> Users:
     return Users.query.get(int(id))
-
-db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
-db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
