@@ -73,6 +73,17 @@ db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
 db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
 
 
+class Messages(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    body = db.Column(db.String(140))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    def __repr__(self):
+        return '<Message {}>'.format(self.body)
+
+
 class Users(UserMixin, PaginatedAPIMixin, db.Model):
     __tablename__ = 'users'
 
@@ -104,6 +115,13 @@ class Users(UserMixin, PaginatedAPIMixin, db.Model):
             secondaryjoin=(followers.c.followed_id == id),
             backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
     posts = db.relationship('Posts', backref='author', lazy='dynamic')
+    messages_sent = db.relationship('Messages',
+                                    foreign_keys='Messages.sender_id',
+                                    backref='author', lazy='dynamic')
+    messages_received = db.relationship('Messages',
+                                        foreign_keys='Messages.recipient_id',
+                                        backref='recipient', lazy='dynamic')
+    last_message_read_time = db.Column(db.DateTime)
 
     def follow(self, user):
         if not self.is_following(user):
@@ -127,6 +145,11 @@ class Users(UserMixin, PaginatedAPIMixin, db.Model):
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expires_in},
             app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+
+    def new_messages(self):
+        last_read_time = self.last_message_read_time or datetime(1900, 1, 1)
+        return Messages.query.filter_by(recipient=self).filter(
+            Message.timestamp > last_read_time).count()
 
     @staticmethod
     def verify_reset_password_token(token):
@@ -178,60 +201,6 @@ class Posts(SearchableMixin, PaginatedAPIMixin, db.Model):
                 'timestamp': str(self.timestamp),
                 'author_id': self.user_id}
         return str(json.dumps(resp))
-
-
-class Chats(db.Model):
-    __tablename__ = 'chats'
-
-    id = db.Column(db.Integer, 
-            primary_key=True)
-    create_time = db.Column(db.DateTime, 
-            index=True, 
-            default=datetime.utcnow)
-    name = db.Column(db.String(128))
-    status = db.Column(db.Integer)
-    description = db.Column(db.String(128))
-
-    def __repr__(self):
-        return f'Chat id {self.id} with name {name}\n'
-
-
-class Messages(db.Model):
-    __tablename__ = 'messages'
-
-    id = db.Column(db.Integer, 
-            primary_key=True)
-    send_time = db.Column(db.DateTime, 
-            index=True, 
-            default=datetime.utcnow)
-    message = db.Column(db.Text(512))
-    type = db.Column(db.Integer)
-    status = db.Column(db.Integer)
-    uid = db.Column(db.Integer, 
-            db.ForeignKey('users.id'))
-    chat_id = db.Column(db.Integer, 
-            db.ForeignKey('chats.id'))
-
-    def __repr__(self):
-        return f'Message id {id} from user with id {uid}\n'
-
-
-class Talkers(db.Model):
-    __tablename__ = 'talkers'
-
-    user_role = db.Column(db.Integer,
-            primary_key=False)
-    status = db.Column(db.Integer,
-            primary_key=False)
-    uid = db.Column(db.Integer, 
-            db.ForeignKey('users.id'),
-            primary_key=True)
-    chat_id = db.Column(db.Integer, 
-            db.ForeignKey('chats.id'),
-            primary_key=False)
-
-    def __repr__(self):
-        return f'{self.uid} talk in chat {self.chat_id}'
 
 
 @login.user_loader

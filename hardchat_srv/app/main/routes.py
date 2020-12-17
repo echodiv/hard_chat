@@ -16,8 +16,8 @@ def before_request():
         g.search_form = SearchForm()
     g.locale = str(get_locale())
 
-@bp.route("/", methods=['GET', 'POST'])
-@bp.route("/index", methods=['GET', 'POST'])
+@bp.route("/")
+@bp.route("/index")
 @login_required
 def index():
     return redirect("/explore", code=302)
@@ -50,34 +50,6 @@ def user_popup(id):
     user = Users.query.filter_by(id=id).first_or_404()
     return render_template('user_popup.html', user=user)
 
-@bp.route("/send")
-def send_mesage():
-    """
-    :param json: {"username":str,"text":str}
-    :return: {"ok":bool}
-    """
-    username = request.json["username"]
-    text = request.json["text"]
-    if not isinstance(username, str) or len(username) == 0:
-        return {"ok": False}
-    if not isinstance(text, str) or len(text) == 0:
-        return {"ok": False}
-
-    current_app.logger.info(username)
-    current_app.logger.info(text)
-
-    # TODO ave message
-
-    return {"ok": True} # hahaha =)
-
-@bp.route("/get_messages")
-@login_required
-def get_messages():
-    """
-    :return: {"messages": ["username": str, "time": str, "text": str]}
-    """
-    return str('{"messages": MESSAGES}')
-
 @bp.route("/follow/<user_id>")
 @login_required
 def follow(user_id):
@@ -108,7 +80,7 @@ def unfollow(user_id):
     flash('You are not following {}.'.format(user.name))
     return redirect(url_for('main.user', id=user_id))
 
-@bp.route('/explore')
+@bp.route('/explore', methods=['GET', 'POST'])
 @login_required
 def explore():
     page = request.args.get('page', 1, type=int)
