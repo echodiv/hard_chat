@@ -7,7 +7,8 @@ class BaseConfig:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'A SECRET KEY'
 
     ##### HardChat #####
-    POST_PER_PAGE = 3
+    POST_PER_PAGE = int(os.environ.get('POST_PER_PAGE') or 3)
+    MSG_PER_PAGE = int(os.environ.get('MSG_PER_PAGE') or 10)
     LANGUAGES = ['en', 'ru']
 
     ##### Flask-Mail #####

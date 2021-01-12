@@ -9,6 +9,11 @@
     {% else %}
         <a href="{{ url_for('main.unfollow', user_id=user.id) }}">Unfollow</a>
     {% endif %}
+    {% if user != current_user %}
+        <a href="{{ url_for('messages.send', recipient_id=user.id) }}">
+            {{ _('Send private message') }}
+        </a>
+    {% endif %}
     {% if user.status_text %}
         <p>{{ user.status_text }}</p>
     {% endif %}

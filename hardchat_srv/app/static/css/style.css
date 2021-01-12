@@ -2,9 +2,18 @@ body{
     background-color: #edece8;
 }
 #nav{
-#    background-color: #8ac5c3;
-#}
-
+    background-color: #8ac5c3;
+}
 .etc {
     background-color: #ffffff;
+}
+.message {
+    border-radius: 10px;
+    background: #dbdbda;
+    padding: 10px; 
+    margin-bottom: 10px;
+}
+.message textarea {
+    height: 500px;
+    resize: none;
 }

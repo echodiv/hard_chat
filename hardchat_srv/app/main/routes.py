@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, url_for, request, g, current
 from flask_babel import _, get_locale
 from app import db
 from app.main import bp
-from app.main.forms import  EditProfile, PostForm, SetStatus, SearchForm
+from app.main.forms import EditProfile, PostForm, SetStatus, SearchForm
 from app.models import Users, Posts
 from datetime import datetime
 from flask_login import current_user, login_user, logout_user, login_required
@@ -31,7 +31,7 @@ def edit_profile():
         current_user.phone = form.phone.data
         db.session.commit()
         flash('Change have been saved')
-        return redirect(url_for('main.edit_profile'))
+        return redirect(url_for('main.user', id=current_user.id))
     elif request.method == 'GET':
         form.name.data = current_user.name
         form.sename.data = current_user.sename
@@ -91,7 +91,6 @@ def explore():
         db.session.commit()
         flash(_('Post published'))
         return redirect(url_for('main.index'))
-    # todo: move to separate function
     return render_template('index.html', title='Explore', form=form)
 
 @bp.route('/search')

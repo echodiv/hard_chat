@@ -149,7 +149,7 @@ class Users(UserMixin, PaginatedAPIMixin, db.Model):
     def new_messages(self):
         last_read_time = self.last_message_read_time or datetime(1900, 1, 1)
         return Messages.query.filter_by(recipient=self).filter(
-            Message.timestamp > last_read_time).count()
+            Messages.timestamp > last_read_time).count()
 
     @staticmethod
     def verify_reset_password_token(token):
@@ -162,6 +162,16 @@ class Users(UserMixin, PaginatedAPIMixin, db.Model):
 
     def __repr__(self):
         return f'<User {self.name} with id {self.id} and email {self.email}>\n'
+
+class Notifications(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    timestamp = db.Column(db.Float, index=True, default=time)
+    payload_json = db.Column(db.Text)
+
+    def get_data(self):
+        return json.loads(str(self.payload_json))
 
 class Posts(SearchableMixin, PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
