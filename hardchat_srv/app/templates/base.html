@@ -21,24 +21,32 @@
 {% block navbar %}
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
     <ul class="navbar-nav mr-auto">
-	<li class="navbar-item">
-		<a class="navbar-brand" href="{{ url_for('main.index') }}">HardChat</a>
-	</li>
-        {% if current_user.is_anonymous %}
-        <li calss="navbar-item">
-	    <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
-	</li>
-	{% else %}
-	<li calss="navbar-item">
-	    <a class="nav-link" href="{{ url_for('main.user', id=current_user.id) }}">Profile</a>
-	</li>
-	<li calss="navbar-item">
-	    <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
-        </li> 
-	{% endif %}
-        <li calss="navbar-item">
-       	    <a class="nav-link" href="{{ url_for('main.explore') }}">Explore</a>
-	</li>
+		<li class="navbar-item">
+			<a class="navbar-brand" href="{{ url_for('main.index') }}">HardChat</a>
+		</li>
+		{% if current_user.is_anonymous %}
+			<li calss="navbar-item">
+			<a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+		</li>
+		{% else %}
+		<li calss="navbar-item">
+			<a class="nav-link" href="{{ url_for('main.user', id=current_user.id) }}">Profile</a>
+		</li>
+		<li calss="navbar-item">
+			<a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+		</li> 
+		<li calss="navbar-item">
+			<a class="nav-link" href="{{ url_for('messages.read') }}">{{ _('Messages') }}
+			{% set new_messages = current_user.new_messages() %}
+			{% if new_messages %}
+				<span class="badge badge-secondary">{{ new_messages }}</span>
+			{% endif %}
+			</a>
+		</li>
+		{% endif %}
+		<li calss="navbar-item">
+			<a class="nav-link" href="{{ url_for('main.explore') }}">Explore</a>
+		</li>
     </ul>
     {% if g.search_form %}
     <form class="form-inline" method="get" action="{{ url_for('main.search') }}">

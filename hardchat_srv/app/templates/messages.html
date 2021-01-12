@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block app_content %}
+    <h1>{{ _('Messages') }}</h1>
+    {% for msg in messages[::-1] %}
+        <div class="message row" id="user_{{ msg.author.id}}">
+            <div class="avatar col-1">
+                <div class="d-flex justify-content-center"><img src="{{url_for('static', filename='img/no_avatar.svg')}}" height="50px" width="50px"></div>
+            </div>
+            <div class="col-11">
+                <p>{{ msg.author.name }} {{ msg.author.sename }} {{ moment(msg.timestamp).fromNow() }}</p>
+                <p><a href="{{ url_for('messages.read', dialog=msg.author.id) }}">{{ msg.body }}</a></p>
+            </div>
+        </div>
+    {% endfor %}
+    <nav aria-label="...">
+        <ul class="pager">
+            <li class="previous{% if not prev_url %} disabled{% endif %}">
+                <a href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&larr;</span> {{ _('Newer messages') }}
+                </a>
+            </li>
+            <li class="next{% if not next_url %} disabled{% endif %}">
+                <a href="{{ next_url or '#' }}">
+                    {{ _('Older messages') }} <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    {% if form %}
+    <form action="{{ url_for('messages.send', recipient_id=recipient_id)}}" method="post">
+        {{ form.csrf_token }}
+        <div class="form-group required">
+           <textarea class="form-control" id="message" name="message" required=""></textarea>
+        </div>
+        <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Submit">  
+    </form>
+    {% endif %}
+{% endblock %}
+{% block scripts %}
+    <script>
+    function move_avatar()
+    {
+        var right_avatar = document.querySelectorAll("div#user_{{ recipient_id }} > div.avatar");
+        var right_text = document.querySelectorAll("div#user_{{ recipient_id }} > div > p");
+        right_avatar.forEach(function(avatar) {
+            avatar.classList.add("order-12");
+            })
+        right_text.forEach(function(more_text) {
+            more_text.classList.add("text-right");
+            })
+    }
+    document.addEventListener("DOMContentLoaded", move_avatar);
+    </script>
+{% endblock %}
