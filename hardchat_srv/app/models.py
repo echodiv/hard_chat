@@ -75,8 +75,8 @@ db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
 
 class Messages(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
@@ -88,9 +88,15 @@ class Users(UserMixin, PaginatedAPIMixin, db.Model):
     __tablename__ = 'users'
 
     def set_password(self, row_pwd):
+        if len(row_pwd) < 8:
+            raise Exception("Password too short. Get {} symbols, \
+                exceted passwors must be longer than 7".format(len(row_pwd)))
         self.password = generate_password_hash(row_pwd)
 
     def check_password(self, row_pwd):
+        if len(row_pwd) < 8:
+            raise Exception("Password too short. Get {} symbols", 
+                "exceted passwors must be longer than 7".format(len(row_pwd)))
         return check_password_hash(self.password, row_pwd)
 
     id = db.Column(db.Integer, 
@@ -103,9 +109,7 @@ class Users(UserMixin, PaginatedAPIMixin, db.Model):
             default=datetime.utcnow)
     name = db.Column(db.String(64))
     sename = db.Column(db.String(64))
-    email = db.Column(db.String(128), 
-            index=True, 
-            unique=True)
+    email = db.Column(db.String(128), index=True, unique=True)
     password = db.Column(db.String(128))
     phone = db.Column(db.String(12))
     status = db.Column(db.Integer)
