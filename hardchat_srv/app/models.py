@@ -1,19 +1,22 @@
-from app import db, login
-from flask import current_app
-from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
-from app.search import add_to_index, remove_from_index, query_index
-from time import time
-import jwt
 import json
-from sqlalchemy import JSON
-from sqlalchemy import cast
+from datetime import datetime
+from time import time
+
+import jwt
+from flask import current_app
+from flask_login import UserMixin
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from app import db, login
+from app.search import add_to_index, query_index, remove_from_index
 
 
-followers = db.Table('followers',
-        db.Column('follower_id', db.Integer, db.ForeignKey('users.id')),
-        db.Column('followed_id', db.Integer, db.ForeignKey('users.id')))
+followers = db.Table(
+    'followers',
+    db.Column('follower_id', db.Integer, db.ForeignKey('users.id')),
+    db.Column('followed_id', db.Integer, db.ForeignKey('users.id'))
+)
+
 
 class PaginatedAPIMixin(object):
     @staticmethod
@@ -29,7 +32,8 @@ class PaginatedAPIMixin(object):
             }
         }
         return data
-        
+
+
 class SearchableMixin(object):
     @classmethod
     def search(cls, expression, page, per_page):
@@ -75,8 +79,12 @@ db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
 
 class Messages(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    sender_id = db.Column(
+        db.Integer, db.ForeignKey('users.id'), nullable=False
+    )
+    recipient_id = db.Column(
+        db.Integer, db.ForeignKey('users.id'), nullable=False
+    )
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
@@ -89,24 +97,25 @@ class Users(UserMixin, PaginatedAPIMixin, db.Model):
 
     def set_password(self, row_pwd):
         if len(row_pwd) < 8:
-            raise Exception("Password too short. Get {} symbols, \
-                exceted passwors must be longer than 7".format(len(row_pwd)))
+            raise Exception(
+                "Password too short. Get {} symbols, "
+                "exceted passwors must be longer than 7".format(len(row_pwd))
+            )
         self.password = generate_password_hash(row_pwd)
 
     def check_password(self, row_pwd):
         if len(row_pwd) < 8:
-            raise Exception("Password too short. Get {} symbols", 
-                "exceted passwors must be longer than 7".format(len(row_pwd)))
+            raise Exception(
+                f"Password too short. Get {len(row_pwd)} symbols",
+                "exceted passwors must be longer than 7"
+            )
         return check_password_hash(self.password, row_pwd)
 
-    id = db.Column(db.Integer, 
-            primary_key=True)
-    reg_time = db.Column(db.DateTime, 
-            index=True, 
-            default=datetime.utcnow)
-    last_visit_time = db.Column(db.DateTime, 
-            index=True, 
-            default=datetime.utcnow)
+    id = db.Column(db.Integer, primary_key=True)
+    reg_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    last_visit_time = db.Column(
+        db.DateTime, index=True, default=datetime.utcnow
+    )
     name = db.Column(db.String(64))
     sename = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
@@ -114,17 +123,27 @@ class Users(UserMixin, PaginatedAPIMixin, db.Model):
     phone = db.Column(db.String(12))
     status = db.Column(db.Integer)
     text_status = db.Column(db.String(256))
-    followed = db.relationship('Users', secondary=followers,
-            primaryjoin=(followers.c.follower_id == id),
-            secondaryjoin=(followers.c.followed_id == id),
-            backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+    followed = db.relationship(
+        'Users',
+        secondary=followers,
+        primaryjoin=(followers.c.follower_id == id),
+        secondaryjoin=(followers.c.followed_id == id),
+        backref=db.backref('followers', lazy='dynamic'),
+        lazy='dynamic'
+    )
     posts = db.relationship('Posts', backref='author', lazy='dynamic')
-    messages_sent = db.relationship('Messages',
-                                    foreign_keys='Messages.sender_id',
-                                    backref='author', lazy='dynamic')
-    messages_received = db.relationship('Messages',
-                                        foreign_keys='Messages.recipient_id',
-                                        backref='recipient', lazy='dynamic')
+    messages_sent = db.relationship(
+        'Messages',
+        foreign_keys='Messages.sender_id',
+        backref='author',
+        lazy='dynamic'
+    )
+    messages_received = db.relationship(
+        'Messages',
+        foreign_keys='Messages.recipient_id',
+        backref='recipient',
+        lazy='dynamic'
+    )
     last_message_read_time = db.Column(db.DateTime)
 
     def follow(self, user):
@@ -136,7 +155,9 @@ class Users(UserMixin, PaginatedAPIMixin, db.Model):
             self.followed.remove(user)
 
     def is_following(self, user):
-        return self.followed.filter(followers.c.followed_id == user.id).count() > 0
+        return self.followed.filter(
+            followers.c.followed_id == user.id
+        ).count() > 0
 
     def followed_posts(self):
         followed = Posts.query.join(
@@ -147,8 +168,13 @@ class Users(UserMixin, PaginatedAPIMixin, db.Model):
 
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
-            {'reset_password': self.id, 'exp': time() + expires_in},
-            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+            {
+                'reset_password': self.id,
+                'exp': time() + expires_in
+            },
+            current_app.config['SECRET_KEY'],
+            algorithm='HS256'
+        ).decode('utf-8')
 
     def new_messages(self):
         last_read_time = self.last_message_read_time or datetime(1900, 1, 1)
@@ -158,14 +184,18 @@ class Users(UserMixin, PaginatedAPIMixin, db.Model):
     @staticmethod
     def verify_reset_password_token(token):
         try:
-            id = jwt.decode(token, app.config['SECRET_KEY'],
-                            algorithms=['HS256'])['reset_password']
-        except:
+            id = jwt.decode(
+                token,
+                current_app.config['SECRET_KEY'],
+                algorithms=['HS256']
+            )['reset_password']
+        except Exception:
             return
         return Users.query.get(id)
 
     def __repr__(self):
         return f'<User {self.name} with id {self.id} and email {self.email}>\n'
+
 
 class Notifications(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -177,6 +207,7 @@ class Notifications(db.Model):
     def get_data(self):
         return json.loads(str(self.payload_json))
 
+
 class Posts(SearchableMixin, PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(140))
@@ -185,22 +216,22 @@ class Posts(SearchableMixin, PaginatedAPIMixin, db.Model):
     __searchable__ = ['body']
 
     def to_dict(self):
-        ''' Return posts in dict format'''
+        """ Return posts in dict format"""
         try:
             user = Users.query.filter_by(id=self.user_id).first()
-        except Exception: 
-        # toDo: read exception ond fix it (unittests)
+        except Exception:
+            # toDo: read exception ond fix it (unittests)
             return {'error': '500', 'reason': 'error with key sql_1'}
 
         data = {
             'id': self.id,
             'post_content': self.body,
             'post_time': self.timestamp.isoformat() + 'Z',
-            'author':{
+            'author': {
                 'id': self.user_id,
                 'name': user.name,
                 'sename': user.sename,
-            } 
+            }
         }
         return data
 

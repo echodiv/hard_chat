@@ -1,10 +1,10 @@
-from app import db, create_app
-from app.models import Users, Posts, Messages
-from config import TestConfig
-from datetime import datetime, timedelta
 import unittest
-import json
+
 from sqlalchemy.exc import IntegrityError
+
+from app import create_app, db
+from app.models import Messages, Users
+from config import TestConfig
 
 
 class MessagesModelCase(unittest.TestCase):
@@ -28,7 +28,7 @@ class MessagesModelCase(unittest.TestCase):
         user_1 = Users.query.filter_by(email='test_1@gmail.net').first_or_404()
         user_2 = Users.query.filter_by(email='test_2@gmail.net').first_or_404()
         msg = Messages(author=user_1, recipient=user_2, body='message_1')
-        
+
         db.session.add(msg)
         db.session.commit()
         get_msg = Messages.query.filter_by(author=user_1).all()

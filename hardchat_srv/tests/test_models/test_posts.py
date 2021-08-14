@@ -1,9 +1,9 @@
-from app import db, create_app
-from app.models import Users, Posts, Messages
-from config import TestConfig
-from datetime import datetime, timedelta
-import unittest
 import json
+import unittest
+
+from app import create_app, db
+from app.models import Posts, Users
+from config import TestConfig
 
 
 class PostsModelCase(unittest.TestCase):
@@ -22,32 +22,30 @@ class PostsModelCase(unittest.TestCase):
 
     def test_publish_post(self):
         user = Users.query.filter_by(email='test@gmail.net').first_or_404()
-        now = datetime.utcnow()
         post = Posts(body="post content", author=user)
         db.session.add(post)
         db.session.commit()
         selected_post = Posts.query.first()
 
-        check_post = {"post_id": 1, 
-                      "post_body": "post content", 
-                      "timestamp": str(selected_post.timestamp), 
-                      "author_id": 1}
-     
+        check_post = {
+            "post_id": 1,
+            "post_body": "post content",
+            "timestamp": str(selected_post.timestamp),
+            "author_id": 1
+        }
+
         selected_post = json.loads(str(selected_post))
 
-        
         self.assertEqual(selected_post['author_id'], check_post['author_id'])
         self.assertEqual(selected_post['post_body'], check_post['post_body'])
         self.assertEqual(selected_post['post_id'], check_post['post_id'])
         self.assertEqual(len(selected_post.keys()), 4)
         self.assertEqual(check_post.keys(), selected_post.keys())
-        
+
     def test_add_just_one_post(self):
         user = Users.query.filter_by(email='test@gmail.net').first_or_404()
-        now = datetime.utcnow()
         post = Posts(body="post content", author=user)
         db.session.add(post)
         db.session.commit()
         all_selected_post = Posts.query.all()
         self.assertEqual(len(all_selected_post), 1)
-        

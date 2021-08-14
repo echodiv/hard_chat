@@ -1,15 +1,18 @@
-from flask import render_template, redirect, url_for, flash, request
+from flask import flash, redirect, render_template, request, url_for
+from flask_login import current_user, login_user, logout_user
 from werkzeug.urls import url_parse
-from flask_login import login_user, logout_user, current_user
-from flask_babel import _
+
 from app import db
 from app.auth import bp
-from app.auth.forms import LoginForm, RegistrationForm, ResetPasswordRequestForm, ResetPasswordForm
-from app.models import Users
 from app.auth.email import send_password_reset_email
+from app.auth.forms import (
+    LoginForm, RegistrationForm, ResetPasswordForm, ResetPasswordRequestForm
+)
+from app.models import Users
+
 
 @bp.route("/login", methods=['GET', 'POST'])
-def login():    
+def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     form = LoginForm()
@@ -26,10 +29,12 @@ def login():
 
     return render_template('auth/login.html', title='Sing In', form=form)
 
+
 @bp.route("/logout")
 def logout():
     logout_user()
     return redirect(url_for('main.index'))
+
 
 @bp.route("/register", methods=['POST', 'GET'])
 def register():
@@ -39,15 +44,18 @@ def register():
     form = RegistrationForm()
 
     if form.validate_on_submit():
-        user = Users(name=form.name.data,
-                sename=form.sename.data,
-                email=form.email.data)
+        user = Users(
+            name=form.name.data,
+            sename=form.sename.data,
+            email=form.email.data
+        )
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
         flash(f'Congratulation! Youre register with email {form.email.data}')
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', title='Register', form=form)
+
 
 @bp.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
@@ -62,6 +70,7 @@ def reset_password_request():
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password_request.html',
                            title='Reset Password', form=form)
+
 
 @bp.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):

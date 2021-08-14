@@ -1,0 +1,4 @@
+[flake8]
+per-file-ignores =
+    ./hardchat_srv/migrations/*: E122, E501, E128, E402, W291
+    ./hardchat_srv/tests.py: F403, F401

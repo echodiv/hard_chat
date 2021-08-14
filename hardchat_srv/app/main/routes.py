@@ -1,12 +1,16 @@
-from flask import render_template, flash, redirect, url_for, request, g, current_app, jsonify
+from datetime import datetime
+
+from flask import (
+    current_app, flash, g, jsonify, redirect, render_template, request, url_for
+)
 from flask_babel import _, get_locale
+from flask_login import current_user, login_required
+
 from app import db
 from app.main import bp
-from app.main.forms import EditProfile, PostForm, SetStatus, SearchForm
-from app.models import Users, Posts
-from datetime import datetime
-from flask_login import current_user, login_user, logout_user, login_required
-from werkzeug.urls import url_parse
+from app.main.forms import EditProfile, PostForm, SearchForm
+from app.models import Posts, Users
+
 
 @bp.before_request
 def before_request():
@@ -16,11 +20,13 @@ def before_request():
         g.search_form = SearchForm()
     g.locale = str(get_locale())
 
+
 @bp.route("/")
 @bp.route("/index")
 @login_required
 def index():
     return redirect("/explore", code=302)
+
 
 @bp.route('/edit_profile', methods=['POST', 'GET'])
 def edit_profile():
@@ -36,7 +42,10 @@ def edit_profile():
         form.name.data = current_user.name
         form.sename.data = current_user.sename
         form.phone.data = current_user.phone
-    return render_template('edit_profile.html', title='Edit profile', form=form)
+    return render_template(
+        'edit_profile.html', title='Edit profile', form=form
+    )
+
 
 @bp.route('/user/<id>')
 @login_required
@@ -44,11 +53,13 @@ def user(id):
     user = Users.query.filter_by(id=id).first_or_404()
     return render_template('user.html', user=user)
 
+
 @bp.route('/user/<id>/popup')
 @login_required
 def user_popup(id):
     user = Users.query.filter_by(id=id).first_or_404()
     return render_template('user_popup.html', user=user)
+
 
 @bp.route("/follow/<user_id>")
 @login_required
@@ -65,6 +76,7 @@ def follow(user_id):
     flash("now youre following {}!".format(user.name))
     return redirect(url_for('main.user', id=user_id))
 
+
 @bp.route('/unfollow/<int:user_id>')
 @login_required
 def unfollow(user_id):
@@ -80,10 +92,11 @@ def unfollow(user_id):
     flash('You are not following {}.'.format(user.name))
     return redirect(url_for('main.user', id=user_id))
 
+
 @bp.route('/explore', methods=['GET', 'POST'])
 @login_required
 def explore():
-    page = request.args.get('page', 1, type=int)
+    # TODO: page = request.args.get('page', 1, type=int)
     form = PostForm()
     if form.validate_on_submit():
         post = Posts(body=form.post.data, author=current_user)
@@ -93,33 +106,53 @@ def explore():
         return redirect(url_for('main.index'))
     return render_template('index.html', title='Explore', form=form)
 
+
 @bp.route('/search')
 @login_required
 def search():
     if not g.search_form.validate():
         return redirect(url_for('main.explore'))
     page = request.args.get('page', 1, type=int)
-    posts, total = Posts.search(g.search_form.q.data, page,
-                               current_app.config['POST_PER_PAGE'])
-    next_url = url_for('main.search', q=g.search_form.q.data, page=page + 1) \
-        if total > page * current_app.config['POST_PER_PAGE'] else None
-    prev_url = url_for('main.search', q=g.search_form.q.data, page=page - 1) \
-        if page > 1 else None
-    return render_template('search.html', title=_('Search'), posts=posts,
-                           next_url=next_url, prev_url=prev_url)
+    posts, total = Posts.search(
+        g.search_form.q.data, page, current_app.config['POST_PER_PAGE']
+    )
+    next_url = url_for(
+        'main.search', q=g.search_form.q.data, page=page + 1
+    ) if total > page * current_app.config['POST_PER_PAGE'] else None
+    prev_url = url_for(
+        'main.search', q=g.search_form.q.data, page=page - 1
+    ) if page > 1 else None
+
+    return render_template(
+        'search.html',
+        title=_('Search'),
+        posts=posts,
+        next_url=next_url,
+        prev_url=prev_url
+    )
+
 
 @bp.route('/user_posts/<int:id>')
 def user_posts(id):
     user = Users.query.filter_by(id=id).first_or_404()
     page = request.args.get('page', 1, type=int)
 
-    return jsonify(Users.to_collection_dict(user.posts, 
-        page, current_app.config['POST_PER_PAGE']))
+    return jsonify(
+        Users.to_collection_dict(
+            user.posts,
+            page,
+            current_app.config['POST_PER_PAGE']
+        )
+    )
+
 
 @bp.route('/followed_posts')
 def followed_posts():
     page = request.args.get('page', 1, type=int)
-    return jsonify(Users.to_collection_dict(current_user.followed_posts(), 
-        page, current_app.config['POST_PER_PAGE']))
-
-
+    return jsonify(
+        Users.to_collection_dict(
+            current_user.followed_posts(),
+            page,
+            current_app.config['POST_PER_PAGE']
+        )
+    )

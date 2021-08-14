@@ -1,9 +1,9 @@
-from app import db, create_app
-from app.models import Users, Posts, Messages
-from config import TestConfig
-from datetime import datetime, timedelta
 import unittest
-import json
+from datetime import datetime, timedelta
+
+from app import create_app, db
+from app.models import Posts, Users
+from config import TestConfig
 
 
 class UsersModelCase(unittest.TestCase):
@@ -60,21 +60,27 @@ class UsersModelCase(unittest.TestCase):
         u2 = Users(name='susan', email='susan@example.com')
         db.session.add_all([u1, u2])
         now = datetime.utcnow()
-        p1 = Posts(body="post from john", author=u1,
-                  timestamp=now + timedelta(seconds=1))
-        p2 = Posts(body="post from susan", author=u2,
-                  timestamp=now + timedelta(seconds=4))
+        p1 = Posts(
+            body="post from john",
+            author=u1,
+            timestamp=now + timedelta(seconds=1)
+        )
+        p2 = Posts(
+            body="post from susan",
+            author=u2,
+            timestamp=now + timedelta(seconds=4)
+        )
         db.session.add_all([p1, p2])
-        u1.follow(u2)  
+        u1.follow(u2)
         db.session.commit()
         f1 = u1.followed_posts().all()
         self.assertEqual(f1, [p2, p1])
-    
+
     def test_is_following_user(self):
         u1 = Users(name='john', email='john@example.com')
         u2 = Users(name='susan', email='susan@example.com')
         db.session.add_all([u1, u2])
-        u1.follow(u2)  
+        u1.follow(u2)
         db.session.commit()
         self.assertTrue(u1.is_following(u2))
 
@@ -82,8 +88,8 @@ class UsersModelCase(unittest.TestCase):
         u1 = Users(name='john', email='john@example.com')
         u2 = Users(name='susan', email='susan@example.com')
         db.session.add_all([u1, u2])
-        u1.follow(u2)  
-        u1.unfollow(u2)  
+        u1.follow(u2)
+        u1.unfollow(u2)
         db.session.commit()
         self.assertFalse(u1.is_following(u2))
 
@@ -95,7 +101,9 @@ class UsersModelCase(unittest.TestCase):
         # create four posts
         now = datetime.utcnow()
         for i in range(10):
-            post = Posts(body="post_{}".format(i), 
-                         author=user,
-                         timestamp=now + timedelta(seconds=i))
+            post = Posts(
+                body="post_{}".format(i),
+                author=user,
+                timestamp=now + timedelta(seconds=i)
+            )
             db.session.add(post)

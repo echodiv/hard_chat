@@ -1,16 +1,18 @@
-from flask import Flask, request, current_app
-from config import BaseConfig
-from elasticsearch import Elasticsearch
-from flask_babel import Babel, lazy_gettext as _l
-from flask_bootstrap import Bootstrap
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_mail import Mail
-from flask_moment import Moment
-from flask_login import LoginManager
 import logging
-from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
+from logging.handlers import RotatingFileHandler, SMTPHandler
+
+from elasticsearch import Elasticsearch
+from flask import Flask, current_app, request
+from flask_babel import Babel
+from flask_bootstrap import Bootstrap
+from flask_login import LoginManager
+from flask_mail import Mail
+from flask_migrate import Migrate
+from flask_moment import Moment
+from flask_sqlalchemy import SQLAlchemy
+
+from config import BaseConfig
 
 # flask modules
 babel = Babel()
@@ -23,6 +25,7 @@ login = LoginManager()
 # settings for login manager
 login.login_view = 'auth.login'
 login.login_message = 'Please log in to access this page'
+
 
 def create_app(config_class=BaseConfig):
     app = Flask(__name__)
@@ -44,7 +47,7 @@ def create_app(config_class=BaseConfig):
 
     from app.auth import bp as auth_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
-        
+
     from app.messages import bp as messages_bp
     app.register_blueprint(messages_bp, url_prefix='/messages')
 
@@ -73,11 +76,15 @@ def create_app(config_class=BaseConfig):
 
         if not os.path.exists('logs'):
             os.mkdir('logs')
-        file_handler = RotatingFileHandler('logs/HARDCHAT.log',
-                                           maxBytes=10240, backupCount=10)
-        file_handler.setFormatter(logging.Formatter(
-            '%(asctime)s %(levelname)s: %(message)s '
-            '[in %(pathname)s:%(lineno)d]'))
+        file_handler = RotatingFileHandler(
+            'logs/HARDCHAT.log', maxBytes=10240, backupCount=10
+        )
+        file_handler.setFormatter(
+            logging.Formatter(
+                '%(asctime)s %(levelname)s: %(message)s '
+                '[in %(pathname)s:%(lineno)d]'
+            )
+        )
         file_handler.setLevel(logging.DEBUG)
         app.logger.addHandler(file_handler)
 
