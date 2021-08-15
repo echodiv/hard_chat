@@ -1,7 +1,23 @@
-# HARD CHAT web form
-Create using Flask
+# Social WEB service
+Create using Flask, sqlAlchemy
+## Modules:
+### 1. auth
+- login
+- logout
+- registration
+- reset password
+### 2. errors
+### 3. main
+- get user profile
+- edit user profile
+- following
+- get followed posts
+### 4. messages
+- send message
+- get message
+### 5. api
 
-## Build docker fith flask application
+## Build docker with flask application
 > docker build -t microblog:latest .
 
 ## Settings

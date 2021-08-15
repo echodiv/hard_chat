@@ -98,8 +98,8 @@ class Users(UserMixin, PaginatedAPIMixin, db.Model):
     def set_password(self, row_pwd):
         if len(row_pwd) < 8:
             raise Exception(
-                "Password too short. Get {} symbols, "
-                "exceted passwors must be longer than 7".format(len(row_pwd))
+                f"Password too short. Got {len(row_pwd)} symbols, "
+                "expected password must be longer than 7"
             )
         self.password = generate_password_hash(row_pwd)
 
@@ -107,7 +107,7 @@ class Users(UserMixin, PaginatedAPIMixin, db.Model):
         if len(row_pwd) < 8:
             raise Exception(
                 f"Password too short. Get {len(row_pwd)} symbols",
-                "exceted passwors must be longer than 7"
+                "expected password must be longer than 7"
             )
         return check_password_hash(self.password, row_pwd)
 
