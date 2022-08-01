@@ -6,8 +6,8 @@ from wtforms.validators import DataRequired, Length
 
 class MessageForm(FlaskForm):
     """Send message to another user"""
+
     message = TextAreaField(
-        _l('Message'),
-        validators=[DataRequired(), Length(min=0, max=140)]
+        _l("Message"), validators=[DataRequired(), Length(min=0, max=140)]
     )
-    submit = SubmitField(_l('Submit'))
+    submit = SubmitField(_l("Submit"))

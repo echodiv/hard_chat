@@ -1,6 +1,8 @@
 elasticsearch
-Flask==1.1.2
+Flask==2.1.0
 flask-wtf==0.14.3
+Werkzeug==2.0.0
+jinja2==3.0.3
 flask-sqlalchemy==2.5.1
 flask-migrate==2.5.3
 flask-login==0.5.0

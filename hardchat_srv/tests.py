@@ -8,5 +8,5 @@ from tests.test_models.test_posts import *
 from tests.test_models.test_users import *
 from tests.test_vievs import *
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
