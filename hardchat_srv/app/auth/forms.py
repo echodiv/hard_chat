@@ -42,8 +42,8 @@ class RegistrationForm(FlaskForm):
     phone = StringField("Phone Number")
     submit = SubmitField("Register")
 
-    @staticmethod
-    def validate_email(email):
+    def validate_email(self, email):
         user = Users.query.filter_by(email=email.data).first()
+
         if user is not None:
             raise ValidationError("Please use a different email address")
