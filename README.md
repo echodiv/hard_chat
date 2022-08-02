@@ -1,32 +1,12 @@
 # Social WEB service
-Create using Flask, sqlAlchemy
-## Modules:
-### 1. auth
-- login
-- logout
-- registration
-- reset password
-### 2. errors
-### 3. main
-- get user profile
-- edit user profile
-- following
-- get followed posts
-### 4. messages
-- send message
-- get message
-### 5. api
+This service provides the ability to send messages not only to your friends, but to all users of the social network.
+For those users who write the most interesting (in your opinion) notes, you can subscribe and follow each entry. And don't lose a single precious symbol.
+You can watch the stream of all entries and, of course, find a lot of useful information there.
+You can send private messages because there are some thoughts that are better said in person. Are there the same?
+You can use the post search to find what you might be missing.
 
-## Build docker with flask application
-> docker build -t microblog:latest .
-
-## Settings
-
-1. Environment variables 
-
-> [export | set ] FLASK_APP=run.py
-
-2. flask run --host 0.0.0.0
+# Technology
+Create using Flask, sqlAlchemy and other
 
 ## Elasticsearch
 
@@ -68,12 +48,3 @@ Create using Flask, sqlAlchemy
 
 3. Compile tanguage packet
 > pybabel compile -d app/translations
-
-## For Test:
-1. shell with flask
-
-> flask shell
-
-2. Test mail server
-
-> python -m smtpd -n -c DebuggingServer localhost:8025
