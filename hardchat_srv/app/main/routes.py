@@ -1,8 +1,5 @@
-from datetime import datetime
-
 from app import db
-from app.main import bp
-from app.main.forms import EditProfile, PostForm, SearchForm
+from app.main.forms import EditProfile, PostForm
 from app.models import Posts, Users
 from flask import (
     current_app,
@@ -18,23 +15,11 @@ from flask_babel import _, get_locale, lazy_gettext as _l
 from flask_login import current_user, login_required
 
 
-@bp.before_request
-def before_request():
-    if current_user.is_authenticated:
-        current_user.last_visit_time = datetime.utcnow()
-        db.session.commit()
-        g.search_form = SearchForm()
-    g.locale = str(get_locale())
-
-
-@bp.route("/")
-@bp.route("/index")
 @login_required
 def index():
     return redirect("/explore", code=302)
 
 
-@bp.route("/edit_profile", methods=["POST", "GET"])
 def edit_profile():
     form = EditProfile()
     if form.validate_on_submit():
@@ -52,7 +37,6 @@ def edit_profile():
     return render_template("edit_profile.html", title="Edit profile", form=form)
 
 
-@bp.route("/user/<id>")
 @login_required
 def user(id):
     user = Users.query.filter_by(id=id).first_or_404()
@@ -60,7 +44,6 @@ def user(id):
     return render_template("user.html", user=user)
 
 
-@bp.route("/user/<id>/popup")
 @login_required
 def user_popup(id):
     user = Users.query.filter_by(id=id).first_or_404()
@@ -68,7 +51,6 @@ def user_popup(id):
     return render_template("user_popup.html", user=user)
 
 
-@bp.route("/follow/<user_id>")
 @login_required
 def follow(user_id):
     user = Users.query.filter_by(id=user_id).first()
@@ -88,7 +70,6 @@ def follow(user_id):
     return redirect(url_for("main.user", id=user_id))
 
 
-@bp.route("/unfollow/<int:user_id>")
 @login_required
 def unfollow(user_id):
     FOLLOW_YOURSELF_ERROR = _l("You cannot unfollow yourself!")
@@ -112,7 +93,6 @@ def unfollow(user_id):
     return redirect(url_for("main.user", id=user_id))
 
 
-@bp.route("/explore", methods=["GET", "POST"])
 @login_required
 def explore():
     # TODO: page = request.args.get('page', 1, type=int)
@@ -131,7 +111,6 @@ def explore():
     return render_template("index.html", title=PAGE_TITLE, form=form)
 
 
-@bp.route("/search")
 @login_required
 def search():
     PAGE_TITLE = _l("Search")
@@ -163,7 +142,6 @@ def search():
     )
 
 
-@bp.route("/user_posts/<int:id>")
 def user_posts(id):
     user = Users.query.filter_by(id=id).first_or_404()
     page = request.args.get("page", 1, type=int)
@@ -173,7 +151,6 @@ def user_posts(id):
     )
 
 
-@bp.route("/followed_posts")
 def followed_posts():
     page = request.args.get("page", 1, type=int)
 

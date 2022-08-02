@@ -1,5 +1,4 @@
 from app import db
-from app.auth import bp
 from app.auth.email import send_password_reset_email
 from app.auth.forms import (
     LoginForm,
@@ -15,7 +14,6 @@ from flask_babel import lazy_gettext as _l
 from werkzeug.urls import url_parse
 
 
-@bp.route("/login", methods=["GET", "POST"])
 def login():
     ERROR_INVALID_USER = _l("Invalid user or password")
     PAGE_TITLE = _l("Sing In")
@@ -42,7 +40,6 @@ def login():
     return render_template("auth/login.html", title=PAGE_TITLE, form=form)
 
 
-@bp.route("/logout")
 @login_required
 def logout():
     logout_user()
@@ -50,7 +47,6 @@ def logout():
     return redirect(url_for("main.index"))
 
 
-@bp.route("/register", methods=["POST", "GET"])
 def register():
     PAGE_TITLE = _l("Register")
     SUCCESS_REGISTRATION_TEXT = _l("Congratulation! Youre register with email")
@@ -73,7 +69,6 @@ def register():
     return render_template("auth/register.html", title=PAGE_TITLE, form=form)
 
 
-@bp.route("/reset_password_request", methods=["GET", "POST"])
 def reset_password_request():
     EMAIL_RESET_TEXT = _l(
         "Check your email for the instructions to reset your password"
@@ -97,7 +92,6 @@ def reset_password_request():
     )
 
 
-@bp.route("/reset_password/<token>", methods=["GET", "POST"])
 def reset_password(token):
     SUCCESS_PASSWORD_RESET_TEXT = _l("Your password has been reset.")
 

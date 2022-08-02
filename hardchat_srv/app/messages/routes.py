@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from app import db
-from app.messages import bp
 from app.messages.forms import MessageForm
 from app.models import Messages, Users
 from flask import current_app, flash, g, redirect, render_template, request, url_for
@@ -10,15 +9,6 @@ from flask_login import current_user, login_required
 from sqlalchemy import and_, or_
 
 
-@bp.before_request
-def before_request():
-    if current_user.is_authenticated:
-        current_user.last_visit_time = datetime.utcnow()
-        db.session.commit()
-    g.locale = str(get_locale())
-
-
-@bp.route("/send/<int:recipient_id>", methods=["POST"])
 @login_required
 def send(recipient_id):
     user = Users.query.filter_by(id=recipient_id).first_or_404()
@@ -35,7 +25,6 @@ def send(recipient_id):
     redirect(url_for("messages.read"))
 
 
-@bp.route("/read")
 @login_required
 def read():
     # It's so horrible

@@ -1,17 +1,22 @@
 import logging
 import os
+from datetime import datetime
+
 from logging.handlers import RotatingFileHandler, SMTPHandler
 
 from config import BaseConfig
 from elasticsearch import Elasticsearch
-from flask import Flask, current_app, request
+from flask import Flask, current_app, request, g
 from flask_babel import Babel
 from flask_bootstrap import Bootstrap
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
+
+from app.main.forms import SearchForm
+from app.urls import register_routers, register_error_handlers
 
 # flask modules
 babel = Babel()
@@ -24,6 +29,16 @@ login = LoginManager()
 # settings for login manager
 login.login_view = "auth.login"
 login.login_message = "Please log in to access this page"
+
+
+def set_middlewares(app: Flask, db) -> None:
+    @app.before_request
+    def user_detector():
+        if current_user.is_authenticated:
+            current_user.last_visit_time = datetime.utcnow()
+            db.session.commit()
+            g.search_form = SearchForm()
+        g.locale = str(get_locale())
 
 
 def create_app(config_class=BaseConfig):
@@ -44,17 +59,9 @@ def create_app(config_class=BaseConfig):
         else None
     )
 
-    from app.errors import bp as errors_bp
-    from app.auth import bp as auth_bp
-    from app.messages import bp as messages_bp
-    from app.api import bp as api_bp
-    from app.main import bp as main_bp
-
-    app.register_blueprint(errors_bp)
-    app.register_blueprint(auth_bp, url_prefix="/auth")
-    app.register_blueprint(messages_bp, url_prefix="/messages")
-    app.register_blueprint(api_bp, url_prefix="/api")
-    app.register_blueprint(main_bp)
+    register_routers(app)
+    register_error_handlers(app)
+    set_middlewares(app, db)
 
     if not app.debug and not app.testing:
         if app.config["MAIL_SERVER"]:
