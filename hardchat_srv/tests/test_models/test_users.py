@@ -61,10 +61,14 @@ class UsersModelCase(unittest.TestCase):
         db.session.add_all([u1, u2])
         now = datetime.utcnow()
         p1 = Posts(
-            body="post from john", author=u1, timestamp=now + timedelta(seconds=1)
+            body="post from john",
+            author=u1,
+            timestamp=now + timedelta(seconds=1),
         )
         p2 = Posts(
-            body="post from susan", author=u2, timestamp=now + timedelta(seconds=4)
+            body="post from susan",
+            author=u2,
+            timestamp=now + timedelta(seconds=4),
         )
         db.session.add_all([p1, p2])
         u1.follow(u2)

@@ -40,23 +40,33 @@ def register_routers(app: Flask) -> None:
         "/auth/register", "auth.register", register, methods=["GET", "POST"]
     )
     app.add_url_rule("/auth/logout", "auth.logout", logout)
-    app.add_url_rule("/auth/login", "auth.login", login, methods=["GET", "POST"])
+    app.add_url_rule(
+        "/auth/login", "auth.login", login, methods=["GET", "POST"]
+    )
 
     app.add_url_rule(
-        "/messages/send/<int:recipient_id>", "messages.send", send, methods=["POST"]
+        "/messages/send/<int:recipient_id>",
+        "messages.send",
+        send,
+        methods=["POST"],
     )
     app.add_url_rule("/messages/read", "messages.read", read)
 
     app.add_url_rule("/search", "main.search", search)
     app.add_url_rule("/followed_posts", "main.followed_posts", followed_posts)
     app.add_url_rule("/user_posts/<int:id>", "main.user_posts", user_posts)
-    app.add_url_rule("/explore", "main.explore", explore, methods=["GET", "POST"])
+    app.add_url_rule(
+        "/explore", "main.explore", explore, methods=["GET", "POST"]
+    )
     app.add_url_rule("/unfollow/<int:user_id>", "main.unfollow", unfollow)
     app.add_url_rule("/follow/<user_id>", "main.follow", follow)
     app.add_url_rule("/user/<id>/popup", "main.user_popup", user_popup)
     app.add_url_rule("/user/<id>", "main.user", user)
     app.add_url_rule(
-        "/edit_profile", "main.edit_profile", edit_profile, methods=["POST", "GET"]
+        "/edit_profile",
+        "main.edit_profile",
+        edit_profile,
+        methods=["POST", "GET"],
     )
     app.add_url_rule("/", "main.index", index)
 

@@ -11,7 +11,7 @@ from flask import (
     request,
     url_for,
 )
-from flask_babel import _, get_locale, lazy_gettext as _l
+from flask_babel import lazy_gettext as _l
 from flask_login import current_user, login_required
 
 
@@ -34,7 +34,9 @@ def edit_profile():
         form.sename.data = current_user.sename
         form.phone.data = current_user.phone
 
-    return render_template("edit_profile.html", title="Edit profile", form=form)
+    return render_template(
+        "edit_profile.html", title="Edit profile", form=form
+    )
 
 
 @login_required
@@ -147,7 +149,9 @@ def user_posts(id):
     page = request.args.get("page", 1, type=int)
 
     return jsonify(
-        Users.to_collection_dict(user.posts, page, current_app.config["POST_PER_PAGE"])
+        Users.to_collection_dict(
+            user.posts, page, current_app.config["POST_PER_PAGE"]
+        )
     )
 
 
@@ -156,6 +160,8 @@ def followed_posts():
 
     return jsonify(
         Users.to_collection_dict(
-            current_user.followed_posts(), page, current_app.config["POST_PER_PAGE"]
+            current_user.followed_posts(),
+            page,
+            current_app.config["POST_PER_PAGE"],
         )
     )

@@ -21,5 +21,7 @@ jobs:
         .venv/bin/pip install -r hardchat_srv/requirements.txt
       env:
         PIPENV_VENV_IN_PROJECT: 1
+    - name: Run linter
+      run: .venv/bin/python -m flake8 ./hardchat_srv/
     - name: Run unit tests
       run: .venv/bin/python hardchat_srv/tests.py

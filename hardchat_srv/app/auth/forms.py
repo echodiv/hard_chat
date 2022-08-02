@@ -32,7 +32,8 @@ class ResetPasswordForm(FlaskForm):
 
     password = PasswordField(TITLES["password"], validators=[DataRequired()])
     password2 = PasswordField(
-        TITLES["repeat_password"], validators=[DataRequired(), EqualTo("password")]
+        TITLES["repeat_password"],
+        validators=[DataRequired(), EqualTo("password")],
     )
     submit = SubmitField(TITLES["button"])
 
@@ -54,7 +55,6 @@ class RegistrationForm(FlaskForm):
         "password": _l("Password"),
         "password2": _l("Repeat Password"),
     }
-    VALIDATION_ERROR_TEXT = _l("Please use a different email address")
 
     name = StringField(TITLES["name"], validators=[DataRequired()])
     sename = StringField(TITLES["sername"])
@@ -67,6 +67,8 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField(TITLES["button"])
 
     def validate_email(self, email):
+        VALIDATION_ERROR_TEXT = _l("Please use a different email address")
+
         user = Users.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError(VALIDATION_ERROR_TEXT)

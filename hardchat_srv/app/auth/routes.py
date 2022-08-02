@@ -84,7 +84,7 @@ def reset_password_request():
         if user:
             send_password_reset_email(user)
 
-        flash(TEXT_EMAIL_RESET)
+        flash(EMAIL_RESET_TEXT)
         return redirect(url_for("auth.login"))
 
     return render_template(

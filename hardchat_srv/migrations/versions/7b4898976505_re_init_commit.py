@@ -34,9 +34,14 @@ def upgrade():
     )
     op.create_index(op.f("ix_users_email"), "users", ["email"], unique=True)
     op.create_index(
-        op.f("ix_users_last_visit_time"), "users", ["last_visit_time"], unique=False
+        op.f("ix_users_last_visit_time"),
+        "users",
+        ["last_visit_time"],
+        unique=False,
     )
-    op.create_index(op.f("ix_users_reg_time"), "users", ["reg_time"], unique=False)
+    op.create_index(
+        op.f("ix_users_reg_time"), "users", ["reg_time"], unique=False
+    )
     op.create_table(
         "followers",
         sa.Column("follower_id", sa.Integer(), nullable=True),
@@ -82,7 +87,9 @@ def upgrade():
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(op.f("ix_posts_timestamp"), "posts", ["timestamp"], unique=False)
+    op.create_index(
+        op.f("ix_posts_timestamp"), "posts", ["timestamp"], unique=False
+    )
     # ### end Alembic commands ###
 
 

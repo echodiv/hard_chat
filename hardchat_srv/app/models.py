@@ -42,7 +42,9 @@ class SearchableMixin(object):
         for i in range(len(ids)):
             when.append((ids[i], i))
         return (
-            cls.query.filter(cls.id.in_(ids)).order_by(db.case(when, value=cls.id)),
+            cls.query.filter(cls.id.in_(ids)).order_by(
+                db.case(when, value=cls.id)
+            ),
             total,
         )
 
@@ -79,8 +81,12 @@ db.event.listen(db.session, "after_commit", SearchableMixin.after_commit)
 
 class Messages(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    sender_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    recipient_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    sender_id = db.Column(
+        db.Integer, db.ForeignKey("users.id"), nullable=False
+    )
+    recipient_id = db.Column(
+        db.Integer, db.ForeignKey("users.id"), nullable=False
+    )
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
@@ -109,7 +115,9 @@ class Users(UserMixin, PaginatedAPIMixin, db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     reg_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    last_visit_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    last_visit_time = db.Column(
+        db.DateTime, index=True, default=datetime.utcnow
+    )
     name = db.Column(db.String(64))
     sename = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
@@ -127,7 +135,10 @@ class Users(UserMixin, PaginatedAPIMixin, db.Model):
     )
     posts = db.relationship("Posts", backref="author", lazy="dynamic")
     messages_sent = db.relationship(
-        "Messages", foreign_keys="Messages.sender_id", backref="author", lazy="dynamic"
+        "Messages",
+        foreign_keys="Messages.sender_id",
+        backref="author",
+        lazy="dynamic",
     )
     messages_received = db.relationship(
         "Messages",
@@ -146,7 +157,10 @@ class Users(UserMixin, PaginatedAPIMixin, db.Model):
             self.followed.remove(user)
 
     def is_following(self, user):
-        return self.followed.filter(followers.c.followed_id == user.id).count() > 0
+        return (
+            self.followed.filter(followers.c.followed_id == user.id).count()
+            > 0
+        )
 
     def followed_posts(self):
         followed = Posts.query.join(

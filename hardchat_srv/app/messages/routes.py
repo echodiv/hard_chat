@@ -3,8 +3,15 @@ from datetime import datetime
 from app import db
 from app.messages.forms import MessageForm
 from app.models import Messages, Users
-from flask import current_app, flash, g, redirect, render_template, request, url_for
-from flask_babel import _, get_locale
+from flask import (
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
+from flask_babel import _
 from flask_login import current_user, login_required
 from sqlalchemy import and_, or_
 
@@ -15,7 +22,9 @@ def send(recipient_id):
     form = MessageForm()
 
     if form.validate_on_submit():
-        msg = Messages(author=current_user, recipient=user, body=form.message.data)
+        msg = Messages(
+            author=current_user, recipient=user, body=form.message.data
+        )
         db.session.add(msg)
         db.session.commit()
         flash(_("Your message has been sent."))
@@ -76,15 +85,22 @@ def read():
     )
 
     next_url = (
-        url_for("messages.read", page=messages.next_num) if messages.has_next else None
+        url_for("messages.read", page=messages.next_num)
+        if messages.has_next
+        else None
     )
     prev_url = (
-        url_for("messages.read", page=messages.prev_num) if messages.has_prev else None
+        url_for("messages.read", page=messages.prev_num)
+        if messages.has_prev
+        else None
     )
 
     current_user.last_message_read_time = datetime.utcnow()
     db.session.commit()
 
     return render_template(
-        "messages.html", messages=messages.items, next_url=next_url, prev_url=prev_url
+        "messages.html",
+        messages=messages.items,
+        next_url=next_url,
+        prev_url=prev_url,
     )
