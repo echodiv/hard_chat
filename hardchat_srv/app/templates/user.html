@@ -3,11 +3,11 @@
 {% block app_content %}
     <h1>User: {{ user.name }}</h1>
     {% if user == current_user %}
-        <a href="{{ url_for('main.edit_profile') }}">Edit profile</a>
+        <a href="{{ url_for('main.edit_profile') }}">{{ _('Edit profile') }}</a>
     {% elif not current_user.is_following(user) %}
-        <a href="{{ url_for('main.follow', user_id=user.id) }}">Follow</a>
+        <a href="{{ url_for('main.follow', user_id=user.id) }}">{{ _('Follow') }}</a>
     {% else %}
-        <a href="{{ url_for('main.unfollow', user_id=user.id) }}">Unfollow</a>
+        <a href="{{ url_for('main.unfollow', user_id=user.id) }}">{{ _('Unfollow') }}</a>
     {% endif %}
     {% if user != current_user %}
         <a href="{{ url_for('messages.send', recipient_id=user.id) }}">
@@ -27,6 +27,6 @@
         <div class="spinner-border" role="status"></div>
     </div>
     <div class="text-center">
-        <button type="button" class="btn btn-light" id="load_posts_btn">More</button>
+        <button type="button" class="btn btn-light" id="load_posts_btn">{{ _('More') }}</button>
     </div>
 {% endblock %}

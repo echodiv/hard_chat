@@ -7,57 +7,239 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-11-23 21:44+0000\n"
+"POT-Creation-Date: 2022-08-02 18:11+0200\n"
 "PO-Revision-Date: 2020-11-23 21:46+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
 "Language-Team: ru <LL@li.org>\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.9.0\n"
+"Generated-By: Babel 2.10.3\n"
 
-#: app/forms.py:10
+#: app/auth/email.py:23
+msgid "[HardChat] Reset Your Password"
+msgstr ""
+
+#: app/auth/forms.py:12 app/auth/forms.py:43 app/auth/forms.py:50
+msgid "Email"
+msgstr ""
+
+#: app/auth/forms.py:13 app/auth/forms.py:28 app/auth/forms.py:54
 msgid "Password"
 msgstr "Пароль"
 
-#: app/forms.py:11
+#: app/auth/forms.py:14
 msgid "Remember Me"
 msgstr "Запомнить меня"
 
-#: app/forms.py:12
+#: app/auth/forms.py:15 app/auth/forms.py:44
 msgid "Sign In"
 msgstr "Вход"
 
-#: app/routes.py:27
+#: app/auth/forms.py:29 app/auth/forms.py:55
+#, fuzzy
+msgid "Repeat Password"
+msgstr "Пароль"
+
+#: app/auth/forms.py:30
+msgid "Request Password Reset"
+msgstr "Сбросить пароль"
+
+#: app/auth/forms.py:49 app/main/forms.py:10
+msgid "Name"
+msgstr "Имя"
+
+#: app/auth/forms.py:51
+msgid "Phone Number"
+msgstr "Номер телефона"
+
+#: app/auth/forms.py:52 app/auth/routes.py:55
+msgid "Register"
+msgstr "Регистрация"
+
+#: app/auth/forms.py:53
+msgid "Sername"
+msgstr "Фамилия"
+
+#: app/auth/forms.py:57
+msgid "Please use a different email address"
+msgstr "Пожалуйста, используйте другой email адрес"
+
+#: app/auth/routes.py:20
+msgid "Invalid user or password"
+msgstr "Ошибка в имени пользователя или пароле"
+
+#: app/auth/routes.py:21
+msgid "Sing In"
+msgstr "Вход"
+
+#: app/auth/routes.py:56
+msgid "Congratulation! Youre register with email"
+msgstr "Поздравляем! Вы зарегистрированны с email адресом"
+
+#: app/auth/routes.py:78
+msgid "Check your email for the instructions to reset your password"
+msgstr "На ваш email была выслана инструкция для сброса пароля"
+
+#: app/auth/routes.py:81
+#, fuzzy
+msgid "Reset Password"
+msgstr "Сбросить пароль"
+
+#: app/auth/routes.py:102
+msgid "Your password has been reset."
+msgstr "Пароль изменен"
+
+#: app/main/forms.py:11
+msgid "Phone number"
+msgstr "Номер телефона"
+
+#: app/main/forms.py:12
+msgid "Sename"
+msgstr "Фамилия"
+
+#: app/main/forms.py:13 app/templates/edit_profile.html:5
+msgid "Edit profile"
+msgstr "Изменить профиль"
+
+#: app/main/forms.py:27
+msgid "Status"
+msgstr "Статус"
+
+#: app/main/forms.py:28
+msgid "OK"
+msgstr "Ок"
+
+#: app/main/forms.py:36
+msgid "What's new?"
+msgstr "Что нового?"
+
+#: app/main/forms.py:37
+msgid "Publush"
+msgstr "Опубликовать"
+
+#: app/main/forms.py:46 app/main/routes.py:137
+msgid "Search"
+msgstr "Поиск"
+
+#: app/main/routes.py:94
+msgid "You cannot unfollow yourself!"
+msgstr "Нельзя отписаться от себя, проказник"
+
+#: app/main/routes.py:95
+msgid "You are not following"
+msgstr "Вы отписались"
+
+#: app/main/routes.py:96
+#, fuzzy
+msgid "User {} not found."
+msgstr "Пользователь {} не найден"
+
+#: app/main/routes.py:119 app/templates/base.html:48
+msgid "Explore"
+msgstr "Исследуй"
+
+#: app/main/routes.py:120
 msgid "Post published"
 msgstr "Пост опубликован"
 
-#: app/templates/404.html:4
-msgid "File not found"
-msgstr "Файл не найден"
+#: app/messages/forms.py:11
+msgid "Message"
+msgstr "Сообщения"
 
-#: app/templates/404.html:5 app/templates/500.html:6
-msgid "home"
-msgstr "домой"
+#: app/messages/forms.py:12
+msgid "Submit"
+msgstr "Отправить"
 
-#: app/templates/500.html:4
-msgid "An unexpected error has accurred"
-msgstr "Произошла неожиданная ошибка"
+#: app/messages/routes.py:31
+msgid "Your message has been sent."
+msgstr "Сообщение отправлено"
 
-#: app/templates/500.html:5
-msgid "The administrator has been notified. Sorry for the inconvenience!"
-msgstr "Администратор уведомлён. Извините за неудобства!"
+#: app/templates/base.html:29
+msgid "Login"
+msgstr "Авторизация"
 
-#: app/templates/_post.html:9
-#, python-format
-msgid "%(username)s said %(when)s"
-msgstr "%(username)s опубликовал %(when)s"
+#: app/templates/base.html:33
+msgid "Profile"
+msgstr "Профиль"
+
+#: app/templates/base.html:36
+msgid "Logout"
+msgstr "Выход"
+
+#: app/templates/base.html:39 app/templates/messages.html:3
+msgid "Messages"
+msgstr "Сообщения"
 
 #: app/templates/index.html:5
 #, python-format
 msgid "Hi, %(username)s!"
 msgstr "Привет, %(username)s!"
+
+#: app/templates/messages.html:19
+msgid "Newer messages"
+msgstr "Новые сообщения"
+
+#: app/templates/messages.html:24
+msgid "Older messages"
+msgstr "Старые сообщения"
+
+#: app/templates/search.html:4
+msgid "Search Results"
+msgstr "Результаты поиска"
+
+#: app/templates/search.html:13
+msgid "Previous results"
+msgstr "Предидущая страница"
+
+#: app/templates/search.html:18
+msgid "Next results"
+msgstr "Следующая страница"
+
+#: app/templates/user_popup.html:13
+msgid "Last seen on"
+msgstr "Последний раз просмотрено"
+
+#: app/templates/user_popup.html:16
+#, python-format
+msgid "%(count)d followers"
+msgstr "%(count)d подписчиков"
+
+#: app/templates/user_popup.html:17
+#, python-format
+msgid "%(count)d following"
+msgstr "%(count)d подписчики"
+
+#: app/templates/user_popup.html:21
+msgid "Follow"
+msgstr "Подписаться"
+
+#: app/templates/user_popup.html:25
+msgid "Unfollow"
+msgstr "Отписаться"
+
+#: app/templates/errors/404.html:4
+msgid "File not found"
+msgstr "Файл не найден"
+
+#: app/templates/errors/404.html:5 app/templates/errors/500.html:6
+msgid "home"
+msgstr "домой"
+
+#: app/templates/errors/500.html:4
+msgid "An unexpected error has accurred"
+msgstr "Произошла неожиданная ошибка"
+
+#: app/templates/errors/500.html:5
+msgid "The administrator has been notified. Sorry for the inconvenience!"
+msgstr "Администратор уведомлён. Извините за неудобства!"
+
+#~ msgid "%(username)s said %(when)s"
+#~ msgstr "%(username)s опубликовал %(when)s"
+
+#~ msgid "Send private message"
+#~ msgstr "Отправить сообщение"
 

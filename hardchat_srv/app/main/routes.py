@@ -4,9 +4,17 @@ from app import db
 from app.main import bp
 from app.main.forms import EditProfile, PostForm, SearchForm
 from app.models import Posts, Users
-from flask import (current_app, flash, g, jsonify, redirect, render_template,
-                   request, url_for)
-from flask_babel import _, get_locale
+from flask import (
+    current_app,
+    flash,
+    g,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
+from flask_babel import _, get_locale, lazy_gettext as _l
 from flask_login import current_user, login_required
 
 
@@ -83,19 +91,23 @@ def follow(user_id):
 @bp.route("/unfollow/<int:user_id>")
 @login_required
 def unfollow(user_id):
+    FOLLOW_YOURSELF_ERROR = _l("You cannot unfollow yourself!")
+    UNFOLLOW_TEXT = _l("You are not following")
+    USER_NOT_FOUND_TEXT = _l("User {} not found.")
+
     user = Users.query.filter_by(id=user_id).first()
 
     if user is None:
-        flash("User {} not found.".format(user_id))
+        flash(USER_NOT_FOUND_TEXT.format(user_id))
         return redirect(url_for("main.index"))
 
     if user == current_user:
-        flash("You cannot unfollow yourself!")
+        flash(FOLLOW_YOURSELF_ERROR)
         return redirect(url_for("main.user", id=user_id))
 
     current_user.unfollow(user)
     db.session.commit()
-    flash("You are not following {}.".format(user.name))
+    flash(f"{UNFOLLOW_TEXT} {user.name}.")
 
     return redirect(url_for("main.user", id=user_id))
 
@@ -104,23 +116,29 @@ def unfollow(user_id):
 @login_required
 def explore():
     # TODO: page = request.args.get('page', 1, type=int)
+    PAGE_TITLE = _l("Explore")
+    POSTED_TEXT = _l("Post published")
+
     form = PostForm()
 
     if form.validate_on_submit():
         post = Posts(body=form.post.data, author=current_user)
         db.session.add(post)
         db.session.commit()
-        flash(_("Post published"))
+        flash(POSTED_TEXT)
         return redirect(url_for("main.index"))
 
-    return render_template("index.html", title="Explore", form=form)
+    return render_template("index.html", title=PAGE_TITLE, form=form)
 
 
 @bp.route("/search")
 @login_required
 def search():
+    PAGE_TITLE = _l("Search")
+
     if not g.search_form.validate():
         return redirect(url_for("main.explore"))
+
     page = request.args.get("page", 1, type=int)
     posts, total = Posts.search(
         g.search_form.q.data, page, current_app.config["POST_PER_PAGE"]
@@ -138,7 +156,7 @@ def search():
 
     return render_template(
         "search.html",
-        title=_("Search"),
+        title=PAGE_TITLE,
         posts=posts,
         next_url=next_url,
         prev_url=prev_url,

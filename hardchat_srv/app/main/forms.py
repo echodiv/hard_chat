@@ -6,22 +6,40 @@ from wtforms.validators import DataRequired, Length
 
 
 class EditProfile(FlaskForm):
-    name = StringField("Name", validators=[DataRequired(), Length(min=1, max=128)])
-    sename = StringField("Sename", validators=[DataRequired(), Length(min=1, max=128)])
-    phone = StringField("Phone number", validators=[Length(min=10, max=12)])
-    submit = SubmitField("Edit Profile")
+    LABELS = {
+        "name": _l("Name"),
+        "phone": _l("Phone number"),
+        "sename": _l("Sename"),
+        "button": _l("Edit profile"),
+    }
+    name = StringField(
+        LABELS["name"], validators=[DataRequired(), Length(min=1, max=128)]
+    )
+    sename = StringField(
+        LABELS["sename"], validators=[DataRequired(), Length(min=1, max=128)]
+    )
+    phone = StringField(LABELS["phone"], validators=[Length(min=10, max=12)])
+    submit = SubmitField(LABELS["phone"])
 
 
 class SetStatus(FlaskForm):
-    status = StringField("Status", validators=[Length(min=0, max=256)])
-    submit = SubmitField("Ok")
+    LABELS = {
+        "status": _l("Status"),
+        "button": _l("OK"),
+    }
+    status = StringField(LABELS["status"], validators=[Length(min=0, max=256)])
+    submit = SubmitField(LABELS["button"])
 
 
 class PostForm(FlaskForm):
+    LABELS = {
+        "post": _l("What's new?"),
+        "button": _l("Publush"),
+    }
     post = TextAreaField(
-        "What's new?", validators=[DataRequired(), Length(min=1, max=140)]
+        LABELS["post"], validators=[DataRequired(), Length(min=1, max=140)]
     )
-    submit = SubmitField("Publush")
+    submit = SubmitField(LABELS["button"])
 
 
 class SearchForm(FlaskForm):

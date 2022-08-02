@@ -4,8 +4,7 @@ from app import db
 from app.messages import bp
 from app.messages.forms import MessageForm
 from app.models import Messages, Users
-from flask import (current_app, flash, g, redirect, render_template, request,
-                   url_for)
+from flask import current_app, flash, g, redirect, render_template, request, url_for
 from flask_babel import _, get_locale
 from flask_login import current_user, login_required
 from sqlalchemy import and_, or_
@@ -39,6 +38,7 @@ def send(recipient_id):
 @bp.route("/read")
 @login_required
 def read():
+    # It's so horrible
     dialog_id = request.args.get("dialog", None, type=int)
     if dialog_id is not None:
         page = request.args.get("page", 1, type=int)
@@ -95,6 +95,7 @@ def read():
 
     current_user.last_message_read_time = datetime.utcnow()
     db.session.commit()
+
     return render_template(
         "messages.html", messages=messages.items, next_url=next_url, prev_url=prev_url
     )
